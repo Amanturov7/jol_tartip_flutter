@@ -29,21 +29,30 @@ Future<void> _login() async {
 
     Map<String, dynamic> responseData = jsonDecode(response.body);
     String accessToken = responseData['accessToken'];
-    
-    await _saveToken(accessToken);
+    String token = responseData['token'];
 
-    Navigator.pushReplacementNamed(context, '/home');
+    await _saveAccessToken(accessToken);
+    await _saveToken(token);
+
+    Navigator.pushReplacementNamed(context, '/');
   } else {
+    // Обрабатываем ошибку
     print('Failed to login: ${response.statusCode}');
   }
 }
 
 
+Future<void> _saveAccessToken(String accessToken) async {
+  // Используем пакет shared_preferences для сохранения токена
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('accessToken', accessToken); // Исправлено на accessToken
+}
+
 Future<void> _saveToken(String token) async {
+  // Используем пакет shared_preferences для сохранения токена
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString('token', token);
 }
-
 
   @override
   Widget build(BuildContext context) {

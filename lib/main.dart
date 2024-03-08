@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import './auth/login_page.dart';
 import './auth/signup_page.dart';
 import './screen/home_page.dart';
 import './screen/maps_page.dart';
-import './screen/profile_page.dart';
 import './screen/notifications_page.dart';
+import './screen/profile_page.dart';
+import './screen/complaints_page.dart'; // Импортируйте новую страницу
 
 void main() {
   runApp(MyApp());
@@ -22,12 +22,16 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(),
-        '/login': (context) => LoginPage(),
         '/signup': (context) => SignupPage(),
         '/home': (context) => HomePage(),
         '/maps': (context) => MapsPage(),
-        '/profile': (context) => ProfilePage(),
         '/notifications': (context) => NotificationsPage(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/login') {
+          return MaterialPageRoute(builder: (context) => LoginPage());
+        }
+        return null;
       },
     );
   }
@@ -44,8 +48,9 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     MapsPage(),
-    ProfilePage(),
     NotificationsPage(),
+    ProfilePage(),
+    ComplaintsPage(), // Добавляем новую страницу в список вкладок
   ];
 
   @override
@@ -54,37 +59,37 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('JolTartip'),
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _widgetOptions,
+      body: _widgetOptions[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Главная',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Карты',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Уведомления',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Профиль',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: 'Обращения', // Новая вкладка "Обращения"
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.black,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        onTap: _onItemTapped,
       ),
-     bottomNavigationBar: BottomNavigationBar(
-  items: const <BottomNavigationBarItem>[
-    BottomNavigationBarItem(
-      icon: Icon(Icons.home),
-      label: 'Главная',
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.map),
-      label: 'Карты',
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.person),
-      label: 'Профиль',
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.notifications),
-      label: 'Уведомления',
-    ),
-  ],
-  currentIndex: _selectedIndex,
-  selectedItemColor: Colors.blue,
-  unselectedItemColor: Colors.black, // Черный цвет для неактивных иконок
-   showSelectedLabels: true, // Показывать метки для выбранных пунктов
-  showUnselectedLabels: true, // Показывать метки для не выбранных пунктов
-  onTap: _onItemTapped,
-),
-
     );
   }
 
