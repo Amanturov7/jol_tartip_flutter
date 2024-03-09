@@ -10,9 +10,9 @@ class ApplicationsList extends StatefulWidget {
 class _ApplicationsListState extends State<ApplicationsList> {
   List<dynamic> applications = [];
   List<dynamic> filterOptions = [];
-  String? selectedFilter = ''; // Обновлено объявление типа
+  int? selectedFilter;
   String title = '';
-  String id = '';
+  int? id;
   String numberAuto = '';
   int pageNumber = 1;
 
@@ -25,10 +25,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   Future<void> fetchData() async {
     try {
-      String url = 'http://localhost:8080/rest/applications/all';
+      String url = 'http://192.168.88.202:8080/rest/applications/all';
       url += '?page=$pageNumber';
 
-      if (selectedFilter!.isNotEmpty) { // Обновлено использование selectedFilter
+      if (selectedFilter != null) {
         url += '&typeViolations=$selectedFilter';
       }
 
@@ -36,7 +36,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
         url += '&title=$title';
       }
 
-      if (id.isNotEmpty) {
+      if (id != null) {
         url += '&id=$id';
       }
 
@@ -60,11 +60,11 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   Future<void> fetchFilterOptions() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost:8080/rest/violations/all'));
+      final response = await http
+          .get(Uri.parse('http://192.168.88.202:8080/rest/violations/all'));
       if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
         setState(() {
-          filterOptions = jsonData['content'] ?? []; // Используйте пустой список по умолчанию, если данные 'content' отсутствуют или имеют неправильный тип
+          filterOptions = json.decode(utf8.decode(response.bodyBytes));
         });
       } else {
         throw Exception('Failed to fetch filter options');
@@ -74,39 +74,43 @@ class _ApplicationsListState extends State<ApplicationsList> {
     }
   }
 
-  void handlePageChange(int newPageNumber) {
-    setState(() {
-      pageNumber = newPageNumber;
-      fetchData();
-    });
-  }
-
-  void handleFilterChange(String? value) { // Обновлено объявление типа
+  void handleFilterChange(int? value) {
     setState(() {
       selectedFilter = value;
-      fetchData();
     });
   }
 
   void handleTitleChange(String value) {
     setState(() {
       title = value;
-      fetchData();
     });
   }
 
   void handleIdChange(String value) {
     setState(() {
-      id = value;
-      fetchData();
+      id = int.tryParse(value);
     });
   }
 
   void handleNumberAutoChange(String value) {
     setState(() {
       numberAuto = value;
-      fetchData();
     });
+  }
+
+  void resetFilters() {
+    setState(() {
+      selectedFilter = null;
+      title = '';
+      id = null;
+      numberAuto = '';
+    });
+    fetchData();
+  }
+
+  void applyFilters() {
+    fetchData();
+    Navigator.pop(context); // Close the bottom sheet after applying filters
   }
 
   @override
@@ -114,97 +118,156 @@ class _ApplicationsListState extends State<ApplicationsList> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Нарушения'),
+        actions: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: Icon(Icons.filter_alt),
+                color: selectedFilter != null ||
+                        title != '' ||
+                        id != null ||
+                        numberAuto != ''
+                    ? Colors.blue
+                    : null,
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return SingleChildScrollView(
+                            child: Container(
+                              padding: EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Фильтры'),
+                                  SizedBox(height: 16),
+                                  // Filter options UI here
+                                  Text('Нарушения'),
+                                  Column(
+                                    children: filterOptions.map((factor) {
+                                      return RadioListTile(
+                                        title: Text(factor['title']),
+                                        value: factor['id'].toInt(),
+                                        groupValue: selectedFilter,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedFilter = value as int?;
+                                          });
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
+                                  SizedBox(height: 8),
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'ID',
+                                    ),
+                                    onChanged: handleIdChange,
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                  SizedBox(height: 8),
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'Номер авто',
+                                    ),
+                                    onChanged: handleNumberAutoChange,
+                                  ),
+                                  SizedBox(height: 8),
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'Заголовок',
+                                    ),
+                                    onChanged: handleTitleChange,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: applyFilters,
+                                        child: Text('Применить'),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        icon: Icon(Icons.close),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+              Positioned(
+                right: 10,
+                top: 10,
+                child: Icon(
+                  Icons.circle,
+                  size: 12,
+                  color: selectedFilter != null ||
+                          title != '' ||
+                          id != null ||
+                          numberAuto != ''
+                      ? Colors.blue
+                      : Colors.transparent,
+                ),
+              ),
+            ],
+          ),
+          IconButton(
+            icon: Icon(Icons.clear),
+            tooltip: 'Сбросить фильтры',
+            onPressed: resetFilters,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: '№',
-                      ),
-                      onChanged: handleIdChange,
-                      controller: TextEditingController(text: id),
-                    ),
-                  ),
-                  SizedBox(width: 8.0),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Гос номер',
-                      ),
-                      onChanged: handleNumberAutoChange,
-                      controller: TextEditingController(text: numberAuto),
-                    ),
-                  ),
-                  SizedBox(width: 8.0),
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: selectedFilter,
-                      onChanged: handleFilterChange as void Function(String?)?, // Преобразование типа
-                      items: filterOptions.map<DropdownMenuItem<String>>((option) {
-                        return DropdownMenuItem<String>(
-                          value: option['id'].toString(),
-                          child: Text(option['title']),
-                        );
-                      }).toList(),
-                      hint: Text('Тип нарушения'),
-                    ),
-                  ),
-                  SizedBox(width: 8.0),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Описание',
-                      ),
-                      onChanged: handleTitleChange,
-                      controller: TextEditingController(text: title),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20), // Добавляем отступ между фильтрами и приложениями
-            Container(
               child: GridView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Количество колонок
-                  crossAxisSpacing: 5.0, // Промежуток между колонками
-                  mainAxisSpacing: 5.0, // Промежуток между строками
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 5.0,
+                  mainAxisSpacing: 5.0,
                 ),
                 itemCount: applications.length,
                 itemBuilder: (BuildContext context, int index) {
                   final application = applications[index];
                   return Container(
-                    margin: EdgeInsets.all(5), // Отступы для блока
+                    margin: EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10), // Закругленные углы
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Image.network(
-                              'http://localhost:8080/rest/attachments/download/applications/${application['id']}',
-                              fit: BoxFit.cover, // Масштабирование изображения
+                              'http://192.168.88.202:8080/rest/attachments/download/applications/${application['id']}',
+                              fit: BoxFit.cover,
                               width: double.infinity,
-                              height: double.infinity,
                             ),
                           ),
                         ),
-                        SizedBox(height: 8), // Отступ между изображением и текстом
+                        SizedBox(height: 8),
                         Text(
                           'Нарушение № ${application['id']}',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
