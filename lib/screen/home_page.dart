@@ -63,94 +63,94 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Недавние нарушения',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-  GridView.count(
-  crossAxisCount: 2,
-  childAspectRatio: 3 / 2,
-  shrinkWrap: true,
-  physics: NeverScrollableScrollPhysics(),
-  children: recentApplications.map((application) {
-    return Container(
-      margin: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                'http://localhost:8080/rest/attachments/download/applications/${application['id']}',
-                fit: BoxFit.cover,
-                width: double.infinity,
+      body: SingleChildScrollView( // Обернуть в SingleChildScrollView
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Недавние нарушения',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Нарушение № ${application['id']}',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }).toList(),
-),
-
-          
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Недавние отзывы',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            GridView.count(
+              crossAxisCount: 2,
+              childAspectRatio: 3 / 2,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              children: recentApplications.map((application) {
+                return Container(
+                  margin: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            'http://localhost:8080/rest/attachments/download/applications/${application['id']}',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Нарушение № ${application['id']}',
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
-          ),
-          
-        GridView.count(
-  crossAxisCount: 2,
-  childAspectRatio: 3 / 2,
-  shrinkWrap: true,
-  physics: NeverScrollableScrollPhysics(),
-  children: recentReviews.map((review) {
-    return Container(
-      margin: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                'http://localhost:8080/rest/attachments/download/reviews/${review['id']}',
-                fit: BoxFit.cover,
-                width: double.infinity,
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Недавние отзывы',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Отзыв № ${review['id']}',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }).toList(),
-),
 
-        ],
+            GridView.count(
+              crossAxisCount: 2,
+              childAspectRatio: 3 / 2,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              children: recentReviews.map((review) {
+                return Container(
+                  margin: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            'http://localhost:8080/rest/attachments/download/reviews/${review['id']}',
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Отзыв № ${review['id']}',
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
       ),
     );
   }
