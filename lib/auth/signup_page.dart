@@ -48,17 +48,38 @@ class _SignupPageState extends State<SignupPage> {
           children: <Widget>[
             TextField(
               controller: _loginController,
-              decoration: InputDecoration(labelText: 'Логин'),
+              decoration: InputDecoration(
+                labelText: 'Логин',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
             ),
+            SizedBox(height: 16),
             TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: InputDecoration(labelText: 'Пароль'),
+              decoration: InputDecoration(
+                labelText: 'Пароль',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _signup,
-              child: Text('Зарегистрироваться'),
+              child: Text(
+                'Зарегистрироваться',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF3BB5E9),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                minimumSize: Size(double.infinity, 70),
+              ),
             ),
           ],
         ),

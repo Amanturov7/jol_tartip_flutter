@@ -27,7 +27,7 @@ class _ReviewsListState extends State<ReviewsList> {
 
   Future<void> fetchData() async {
     try {
-      String url = 'http://192.168.88.202:8080/rest/reviews/all?';
+      String url = 'http://localhost:8080/rest/reviews/all?';
 
       if (selectedRoadSignId != null) {
         url += '&roadSignId=$selectedRoadSignId';
@@ -59,13 +59,13 @@ class _ReviewsListState extends State<ReviewsList> {
   Future<void> fetchFilterOptions() async {
     try {
       final ecologicFactorsUrl = Uri.parse(
-          'http://192.168.88.202:8080/rest/common-reference/by-type/007');
+          'http://localhost:8080/rest/common-reference/by-type/007');
       final roadSignsUrl = Uri.parse(
-          'http://192.168.88.202:8080/rest/common-reference/by-type/003');
+          'http://localhost:8080/rest/common-reference/by-type/003');
       final lightsUrl = Uri.parse(
-          'http://192.168.88.202:8080/rest/common-reference/by-type/004');
+          'http://localhost:8080/rest/common-reference/by-type/004');
       final roadsUrl = Uri.parse(
-          'http://192.168.88.202:8080/rest/common-reference/by-type/005');
+          'http://localhost:8080/rest/common-reference/by-type/005');
 
       final ecologicFactorsResponse = await http.get(ecologicFactorsUrl);
       final roadSignsResponse = await http.get(roadSignsUrl);
@@ -258,7 +258,7 @@ class _ReviewsListState extends State<ReviewsList> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
-                      'http://192.168.88.202:8080/rest/attachments/download/reviews/${review['id']}',
+                      'http://localhost:8080/rest/attachments/download/reviews/${review['id']}',
                       fit: BoxFit.cover,
                       width: double.infinity,
                     ),

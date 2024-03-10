@@ -48,7 +48,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     MapsPage(),
-    NotificationsPage(),
     ProfilePage(),
     ComplaintsPage(), // Добавляем новую страницу в список вкладок
   ];
@@ -69,10 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
             label: 'Карты',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Уведомления',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

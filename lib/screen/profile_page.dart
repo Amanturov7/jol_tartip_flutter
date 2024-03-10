@@ -3,6 +3,7 @@ import '../auth/login_page.dart';
 import '../user_data_page.dart'; // Импортируем файл с пользовательскими данными
 import 'package:shared_preferences/shared_preferences.dart';
 import '../auth/signup_page.dart'; // Импортируем файл с регистрацией
+
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -37,38 +38,70 @@ class ProfilePage extends StatelessWidget {
                         }
                       },
                       child: Text('Мои данные'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF3BB5E9),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        minimumSize: Size(double.infinity, 70),
+                      ),
                     ),
-                    if (!snapshot.data!) // Если пользователь не авторизован
-  ElevatedButton(
-    onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => SignupPage()), // Переход на страницу регистрации
-      );
-    },
-    child: Text('Зарегистрироваться'),
-  ),
-
                   if (!snapshot.data!) // Если пользователь не авторизован
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
+                          MaterialPageRoute(builder: (context) => SignupPage()), // Переход на страницу регистрации
                         );
                       },
-                      child: Text('Войти'),
+                      child: Text('Зарегистрироваться', style: TextStyle(fontSize: 20, color: Colors.white),),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF3BB5E9),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        minimumSize: Size(double.infinity, 70),
+                      ),
                     ),
-                 if (snapshot.data!) // Если пользователь авторизован
-  ElevatedButton(
-    onPressed: () async {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('token'); // Удаляем токен
-      // Дополнительные действия при выходе
-    },
-    child: Text('Выйти'),
-  ),
-
+                  if (!snapshot.data!) 
+                    SizedBox(height: 20),
+                  // Если пользователь не авторизован
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    },
+                    child: Text('Войти', style: TextStyle(fontSize: 20, color: Colors.white),),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF3BB5E9),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      minimumSize: Size(double.infinity, 70),
+                    ),
+                  ),
+                  if (snapshot.data!) // Если пользователь авторизован
+                    ElevatedButton(
+                      onPressed: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.remove('token'); // Удаляем токен
+                        Navigator.pushReplacement( // Перезагружаем страницу
+                          context,
+                          MaterialPageRoute(builder: (context) => ProfilePage()),
+                        );
+                        // Дополнительные действия при выходе
+                      },
+                      child: Text('Выйти'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF3BB5E9),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        minimumSize: Size(double.infinity, 70),
+                      ),
+                    ),
                 ],
               ),
             ),

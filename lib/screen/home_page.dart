@@ -5,7 +5,18 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Главная'),
+        title: Row(
+          children: [
+            Text('Главная'),
+            Spacer(), // Распределитель пространства между текстом и кнопкой
+            IconButton(
+              icon: Icon(Icons.notifications), // Иконка уведомлений
+              onPressed: () {
+                Navigator.pushNamed(context, '/notifications');
+              },
+            ),
+          ],
+        ),
       ),
       body: Center(
         child: GridView.count(

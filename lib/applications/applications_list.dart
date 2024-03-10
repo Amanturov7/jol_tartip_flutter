@@ -25,7 +25,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   Future<void> fetchData() async {
     try {
-      String url = 'http://192.168.88.202:8080/rest/applications/all';
+      String url = 'http://localhost:8080/rest/applications/all';
       url += '?page=$pageNumber';
 
       if (selectedFilter != null) {
@@ -61,7 +61,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
   Future<void> fetchFilterOptions() async {
     try {
       final response = await http
-          .get(Uri.parse('http://192.168.88.202:8080/rest/violations/all'));
+          .get(Uri.parse('http://localhost:8080/rest/violations/all'));
       if (response.statusCode == 200) {
         setState(() {
           filterOptions = json.decode(utf8.decode(response.bodyBytes));
@@ -257,7 +257,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Image.network(
-                              'http://192.168.88.202:8080/rest/attachments/download/applications/${application['id']}',
+                              'http://localhost:8080/rest/attachments/download/applications/${application['id']}',
                               fit: BoxFit.cover,
                               width: double.infinity,
                             ),
