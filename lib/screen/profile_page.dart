@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jol_tartip_flutter/main.dart';
+import 'package:jol_tartip_flutter/screen/home_page.dart';
 import '../auth/login_page.dart';
 import '../user_data_page.dart'; // Импортируем файл с пользовательскими данными
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,7 +10,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: isAuthenticated(), // Проверяем статус аутентификации
+      future: isAuthenticated(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Scaffold(
@@ -19,42 +21,37 @@ class ProfilePage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (snapshot.data!) // Если пользователь авторизован
-                    ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          final prefs = await SharedPreferences.getInstance();
-                          final token = prefs.getString('token');
-                          if (token != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => UserDataPage(), // Переходим на страницу с данными пользователя
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          print('Ошибка при загрузке данных пользователя: $e');
-                        }
-                      },
-                      child: Text('Мои данные'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF3BB5E9),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        minimumSize: Size(double.infinity, 70),
-                      ),
-                    ),
+                 if (snapshot.data!) // Если пользователь авторизован
+  ElevatedButton(
+    
+    onPressed: () async {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserDataPage(),
+        ),
+      );
+    },
+    child: Text('Мои данные', style: TextStyle(fontSize: 20, color: Colors.white)),
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Color(0xFF3BB5E9),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      minimumSize: Size(double.infinity, 70),
+    ),
+    
+  ),
+
                   if (!snapshot.data!) // Если пользователь не авторизован
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => SignupPage()), // Переход на страницу регистрации
+                          MaterialPageRoute(builder: (context) => SignupPage()),
                         );
                       },
-                      child: Text('Зарегистрироваться', style: TextStyle(fontSize: 20, color: Colors.white),),
+                      child: Text('Зарегистрироваться', style: TextStyle(fontSize: 20, color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF3BB5E9),
                         shape: RoundedRectangleBorder(
@@ -63,37 +60,40 @@ class ProfilePage extends StatelessWidget {
                         minimumSize: Size(double.infinity, 70),
                       ),
                     ),
-                  if (!snapshot.data!) 
+                  if (!snapshot.hasData || !snapshot.data!) // Если пользователь не авторизован
                     SizedBox(height: 20),
-                  // Если пользователь не авторизован
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                    child: Text('Войти', style: TextStyle(fontSize: 20, color: Colors.white),),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF3BB5E9),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      minimumSize: Size(double.infinity, 70),
-                    ),
-                  ),
-                  if (snapshot.data!) // Если пользователь авторизован
+                  if (!snapshot.hasData || !snapshot.data!) // Если пользователь не авторизован
                     ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      child: Text('Войти', style: TextStyle(fontSize: 20, color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF3BB5E9),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        minimumSize: Size(double.infinity, 70),
+                      ),
+                    ),
+
+                  SizedBox(height: 20),
+                  if (snapshot.data!)
+                    ElevatedButton(
+                      
                       onPressed: () async {
                         final prefs = await SharedPreferences.getInstance();
-                        await prefs.remove('token'); // Удаляем токен
-                        Navigator.pushReplacement( // Перезагружаем страницу
+                        await prefs.remove('token');
+                        Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => ProfilePage()),
+                          MaterialPageRoute(builder: (context) => MyApp()),
+                          (route) => false,
                         );
-                        // Дополнительные действия при выходе
                       },
-                      child: Text('Выйти'),
+                      child: Text('Выйти', style: TextStyle(fontSize: 20, color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF3BB5E9),
                         shape: RoundedRectangleBorder(
@@ -109,16 +109,15 @@ class ProfilePage extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Text('Ошибка: ${snapshot.error}');
         } else {
-          return CircularProgressIndicator(); // Отображаем индикатор загрузки, пока выполняется проверка
+          return CircularProgressIndicator();
         }
       },
     );
   }
 
   Future<bool> isAuthenticated() async {
-    // Проверяем, есть ли токен доступа в shared_preferences
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    return token != null; // Если токен доступа существует, значит пользователь авторизован
+    return token != null;
   }
 }

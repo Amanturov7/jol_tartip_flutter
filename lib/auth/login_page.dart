@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:jol_tartip_flutter/main.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,8 +33,11 @@ class _LoginPageState extends State<LoginPage> {
 
       await _saveAccessToken(accessToken);
       await _saveToken(token);
-
-      Navigator.pushReplacementNamed(context, '/');
+        Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => MyApp()), // Замените MyApp на ваш класс главной страницы
+                        (route) => false, // Удалить все предыдущие страницы из стека навигации
+                      );
     } else {
       // Обрабатываем ошибку
       print('Failed to login: ${response.statusCode}');
