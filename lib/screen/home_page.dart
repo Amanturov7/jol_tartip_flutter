@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../search_results_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -8,12 +9,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String searchQuery = ''; // Состояние для хранения введенного запроса
+
+  TextEditingController _searchController = TextEditingController();
+
   List<Map<String, dynamic>> recentApplications = [];
   List<Map<String, dynamic>> recentReviews = [];
 
   @override
   void initState() {
     super.initState();
+        searchQuery = ''; // Присвоение пустой строки переменной searchQuery
     fetchRecentApplications();
     fetchRecentReviews();
   }
@@ -63,10 +69,56 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: SingleChildScrollView( // Обернуть в SingleChildScrollView
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Проверка нарушений по гос номеру',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+
+              ),
+            ),
+           Padding(
+  padding: const EdgeInsets.all(8.0),
+  child: TextField(
+    controller: _searchController,
+    decoration: InputDecoration(
+      labelText: '01KG777AAA',
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      suffixIcon: InkWell(
+        onTap: () {
+          _search();
+        },
+        borderRadius: BorderRadius.circular(30.0),
+        child: Container(
+          padding: const EdgeInsets.all(7.0),
+          margin: const EdgeInsets.all(7.0),
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          child: Icon(
+            Icons.search,
+            color: Colors.white,
+            size: 40,
+          ),
+        ),
+      ),
+    ),
+    onChanged: (value) {
+      setState(() {
+        searchQuery = value;
+      });
+    },
+  ),
+),
+
+
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -74,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            GridView.count(
+         GridView.count(
               crossAxisCount: 2,
               childAspectRatio: 3 / 2,
               shrinkWrap: true,
@@ -83,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                 return Container(
                   margin: EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(0),
                   ),
                   child: Column(
                     children: [
@@ -148,10 +200,17 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               }).toList(),
-            ),
+            )
           ],
         ),
       ),
+    );
+  }
+
+  void _search() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SearchResultsPage(searchQuery: _searchController.text)),
     );
   }
 }
