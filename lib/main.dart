@@ -47,9 +47,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
+        ComplaintsPage(),
     MapsPage(),
-    ProfilePage(),
-    ComplaintsPage(), // Добавляем новую страницу в список вкладок
+        ProfilePage(),
+ // Добавляем новую страницу в список вкладок
   ];
 
   @override
@@ -65,19 +66,21 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.home),
             label: 'Главная',
           ),
+              BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: 'Обращения', // Новая вкладка "Обращения"
+          ),
+       
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
             label: 'Карты',
           ),
-          BottomNavigationBarItem(
+       
+           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Профиль',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment),
-            label: 'Обращения', // Новая вкладка "Обращения"
-          ),
-        ],
+           ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.black,
