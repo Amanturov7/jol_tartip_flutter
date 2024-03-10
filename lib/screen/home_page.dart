@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchRecentApplications() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost:8080/rest/applications/latest'));
+      final response = await http.get(Uri.parse('http://172.26.192.1:8080/rest/applications/latest'));
       final data = jsonDecode(response.body);
       if (data is List) {
         setState(() {
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchRecentReviews() async {
     try {
-      final response = await http.get(Uri.parse('http://localhost:8080/rest/reviews/latest'));
+      final response = await http.get(Uri.parse('http://172.26.192.1:8080/rest/reviews/latest'));
       final data = jsonDecode(response.body);
       if (data is List) {
         setState(() {
@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Image.network(
-                            'http://localhost:8080/rest/attachments/download/applications/${application['id']}',
+                            'http://172.26.192.1:8080/rest/attachments/download/applications/${application['id']}',
                             fit: BoxFit.cover,
                             width: double.infinity,
                           ),
@@ -185,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Image.network(
-                            'http://localhost:8080/rest/attachments/download/reviews/${review['id']}',
+                            'http://172.26.192.1:8080/rest/attachments/download/reviews/${review['id']}',
                             fit: BoxFit.cover,
                             width: double.infinity,
                           ),
