@@ -5,7 +5,8 @@ import './screen/home_page.dart';
 import './screen/maps_page.dart';
 import './screen/notifications_page.dart';
 import './screen/profile_page.dart';
-import './screen/complaints_page.dart'; // Импортируйте новую страницу
+import './screen/complaints_page.dart';
+import 'screen/forms.dart'; // Импортируем новый файл с формами
 
 void main() {
   runApp(MyApp());
@@ -47,18 +48,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
-        ComplaintsPage(),
+    ComplaintsPage(),
+    FormsPage(), // Используем новый виджет с формами
     MapsPage(),
-        ProfilePage(),
- // Добавляем новую страницу в список вкладок
+    ProfilePage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('JolTartip'),
-      ),
       body: _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -66,21 +64,23 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.home),
             label: 'Главная',
           ),
-              BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.assignment),
-            label: 'Обращения', // Новая вкладка "Обращения"
+            label: 'Обращения',
           ),
-       
+          BottomNavigationBarItem(
+            icon: Icon(Icons.playlist_add), // Используем новый значок "playlist_add"
+            label: 'Создать', // Название новой вкладки
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
             label: 'Карты',
           ),
-       
-           BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Профиль',
           ),
-           ],
+        ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.black,
