@@ -210,7 +210,7 @@ Future<void> selectDateAndTime() async {
                     description = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Описание',   border: OutlineInputBorder(
+                decoration: InputDecoration(hintText: 'Описание',   border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(30.0),
                                       ),
                                          focusedBorder: OutlineInputBorder(
@@ -226,7 +226,7 @@ Future<void> selectDateAndTime() async {
                     place = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Адрес',  border: OutlineInputBorder(
+                decoration: InputDecoration(hintText: 'Адрес',  border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(30.0),
                                       ),
                                          focusedBorder: OutlineInputBorder(
@@ -241,7 +241,7 @@ Future<void> selectDateAndTime() async {
   controller: dateController,
   onTap: selectDateAndTime,
   decoration: InputDecoration(
-    labelText: 'Дата и время нарушения', 
+    hintText: 'Дата и время нарушения', 
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(30.0),
     ),
@@ -296,7 +296,7 @@ Future<void> selectDateAndTime() async {
                   });
                 },
                 decoration: InputDecoration(
-                  labelText: 'Гос номер', 
+                  hintText: 'Гос номер', 
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
