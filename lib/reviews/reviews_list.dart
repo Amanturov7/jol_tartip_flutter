@@ -136,7 +136,7 @@ class _ReviewsListState extends State<ReviewsList> {
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30.0),
                                     ),
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),                                
                                   ),
                                   items: [
                                     
@@ -169,7 +169,7 @@ class _ReviewsListState extends State<ReviewsList> {
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30.0),
                                     ),
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),                                
                                   ),
                                   items: [
                                     DropdownMenuItem<int?>(
@@ -200,7 +200,7 @@ class _ReviewsListState extends State<ReviewsList> {
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30.0),
                                     ),
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),                                
                                   ),
                                   items: [
                                     DropdownMenuItem<int?>(
@@ -231,7 +231,7 @@ class _ReviewsListState extends State<ReviewsList> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30.0),
                                   ),
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),                                
                                 ),
                                 items: [
                                   DropdownMenuItem<int?>(
@@ -254,14 +254,27 @@ class _ReviewsListState extends State<ReviewsList> {
                                   });
                                 },
                               ),
-
+                                  SizedBox(height: 8),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       ElevatedButton(
                                         onPressed: applyFilters,
-                                        child: Text('Применить'),
+                                        child: Container(
+                                          padding: EdgeInsets.all(16),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Применить',
+                                            style: TextStyle(fontSize: 20, color: Colors.white),
+                                          ),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color(0xFF3BB5E9),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                          ),
+                                        ),
                                       ),
                                       IconButton(
                                         onPressed: () {

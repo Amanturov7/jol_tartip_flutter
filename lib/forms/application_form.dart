@@ -195,7 +195,7 @@ Future<void> selectDateAndTime() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Violation Form'),
+        title: Text('Обращение о нарушении'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -203,62 +203,109 @@ Future<void> selectDateAndTime() async {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-         
+              SizedBox(height: 8),
               TextFormField(
                 onChanged: (value) {
                   setState(() {
                     description = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: InputDecoration(labelText: 'Описание',   border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                         focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+      borderRadius: BorderRadius.circular(30.0),
+    ),),
+                                      
               ),
+              SizedBox(height: 8),
               TextFormField(
                 onChanged: (value) {
                   setState(() {
                     place = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Place'),
+                decoration: InputDecoration(labelText: 'Адрес',  border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                         focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+      borderRadius: BorderRadius.circular(30.0),
+    ),),
+                
               ),
-              TextFormField(
-                readOnly: true,
-                controller: dateController,
-                onTap: selectDateAndTime,
-                decoration: InputDecoration(
-                  labelText: 'Date and Time of Violation',
-                  suffixIcon: Icon(Icons.calendar_today),
-                ),
-              ),
-       DropdownButtonFormField<int?>(
-  value: selectedViolationIndex,
-  items: [
-    DropdownMenuItem<int?>(
-      value: null,
-      child: Text('Выберите нарушение'),
+              SizedBox(height: 8),
+        TextFormField(
+  readOnly: true,
+  controller: dateController,
+  onTap: selectDateAndTime,
+  decoration: InputDecoration(
+    labelText: 'Дата и время нарушения', 
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30.0),
     ),
-    ...violationsList.map((violation) {
-      return DropdownMenuItem<int>(
-        value: violation['id'] as int,
-        child: Text(violation['title'] as String),
-      );
-    }).toList(),
-  ],
-  onChanged: (value) {
-    setState(() {
-      selectedViolationIndex = value;
-      typeViolationsId = value ?? 0; // Если value равно null, используйте значение по умолчанию, например, 0
-    });
-  },
+    suffixIcon: Icon(
+      Icons.calendar_today,
+      color: Color(0xFF3BB5E9), // Установите желаемый цвет для иконки календаря
+    ),
+
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+      borderRadius: BorderRadius.circular(30.0),
+    ),
+  ),
 ),
 
+              SizedBox(height: 8),
+              DropdownButtonFormField<int?>(
+                value: selectedViolationIndex,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                     focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+      borderRadius: BorderRadius.circular(30.0),
+    ),
+                ),
+                items: [
+                  DropdownMenuItem<int?>(
+                    value: null,
+                    child: Text('Выберите тип нарушения'),
+                  ),
+                  ...violationsList.map((violation) {
+                    return DropdownMenuItem<int>(
+                      value: violation['id'] as int,
+                      child: Text(violation['title'] as String),
+                    );
+                  }).toList(),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    selectedViolationIndex = value;
+                    typeViolationsId = value ?? 0; // Если value равно null, используйте значение по умолчанию, например, 0
+                  });
+                },
+              ),
+              SizedBox(height: 8),
               TextFormField(
                 onChanged: (value) {
                   setState(() {
                     numberAuto = value;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Auto Number'),
+                decoration: InputDecoration(
+                  labelText: 'Гос номер', 
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),),
               ),
+              SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () async {
                   // Get image from gallery
@@ -267,7 +314,8 @@ Future<void> selectDateAndTime() async {
                     _image = image;
                   });
                 },
-                child: Text('Pick Image from Gallery'),
+                child: Text('Из галереи'),
+                
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -277,7 +325,7 @@ Future<void> selectDateAndTime() async {
                     _image = image;
                   });
                 },
-                child: Text('Take Photo'),
+                child: Text('Открыть камеру'),
               ),
               ElevatedButton(
     onPressed: submitForm,
@@ -286,7 +334,7 @@ Future<void> selectDateAndTime() async {
       padding: EdgeInsets.all(16),
       alignment: Alignment.center,
       child: Text(
-        'Применить',
+        'Сохранить',
         style: TextStyle(fontSize: 20, color: Colors.white),
       ),
     ),

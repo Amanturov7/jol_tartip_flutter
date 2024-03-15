@@ -80,10 +80,14 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    labelText: 'Логин',
+                    hintText: 'Логин',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
+                           focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
+                                            borderRadius: BorderRadius.circular(30.0),
+                                        ),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -98,10 +102,14 @@ class _SignupPageState extends State<SignupPage> {
                   },
                   obscureText: true,
                   decoration: InputDecoration(
-                    labelText: 'Пароль',
+                    hintText: 'Пароль',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
+                           focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
+                                            borderRadius: BorderRadius.circular(30.0),
+                                        ),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -114,10 +122,14 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    labelText: 'Адрес',
+                    hintText: 'Адрес',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
+                           focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
+                                            borderRadius: BorderRadius.circular(30.0),
+                                        ),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -130,10 +142,14 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    labelText: 'ИНН',
+                    hintText: 'ИНН',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
+                           focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
+                                            borderRadius: BorderRadius.circular(30.0),
+                                        ),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -146,10 +162,14 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    labelText: 'Пасспорт Серия №',
+                    hintText: 'Пасспорт Серия №',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
+                           focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
+                                            borderRadius: BorderRadius.circular(30.0),
+                                        ),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -162,10 +182,14 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    labelText: 'Номер телефона',
+                    hintText: 'Номер телефона',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
+                           focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
+                                            borderRadius: BorderRadius.circular(30.0),
+                                        ),
                   ),
                 ),
                 SizedBox(height: 16),

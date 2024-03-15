@@ -80,10 +80,14 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  labelText: 'Логин',
+                  hintText: 'Логин',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
+                         focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
+                                            borderRadius: BorderRadius.circular(30.0),
+                                        ),
                 ),
               ),
 
@@ -98,10 +102,14 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'Пароль',
+                  hintText: 'Пароль',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
+                         focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
+                                            borderRadius: BorderRadius.circular(30.0),
+                                        ),
                 ),
               ),
               SizedBox(height: 20),

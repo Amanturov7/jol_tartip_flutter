@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
   child: TextField(
     controller: _searchController,
     decoration: InputDecoration(
-      labelText: '01KG777AAA',
+      hintText: '01KG777AAA',
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30.0),
       ),

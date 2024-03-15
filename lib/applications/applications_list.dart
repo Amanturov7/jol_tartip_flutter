@@ -139,50 +139,58 @@ class _ApplicationsListState extends State<ApplicationsList> {
                       return StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
                           return SingleChildScrollView(
+                            padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom,
+                            ),
                             child: Container(
                               padding: EdgeInsets.all(16.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(height: 16),
-                                  // Filter options UI here
-                                DropdownButtonFormField<int?>(
-  value: selectedFilter,
-  decoration: InputDecoration(
-    hintText: 'Выберите нарушение',
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30.0),
-    ),
-    contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
-  ),
-  items: [
-    DropdownMenuItem<int?>(
-      value: null,
-      child: Text('Выберите нарушение'),
-    ),
-    ...filterOptions.map<DropdownMenuItem<int?>>((factor) {
-      return DropdownMenuItem<int?>(
-        value: factor['id'].toInt(),
-        child: Text(factor['title']),
-      );
-    }).toList(),
-  ],
-  onChanged: (value) {
-    setState(() {
-      selectedFilter = value;
-    });
-  },
-),
+                                  DropdownButtonFormField<int?>(
+                                    
+                                    value: selectedFilter,
+                                    
+                                    decoration: InputDecoration(
+                                      
+                                      border: OutlineInputBorder(
+                                        
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
 
-
-
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),                                
+                                    ),
+                                    
+                                    items: [
+                                      DropdownMenuItem<int?>(
+                                        value: null,
+                                        child: Text('Выберите тип нарушения',         ),
+                                      ),
+                                      ...filterOptions.map<DropdownMenuItem<int?>>((factor) {
+                                        return DropdownMenuItem<int?>(
+                                          value: factor['id'].toInt(),
+                                          child: Text(factor['title'],),
+                                        );
+                                      }).toList(),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedFilter = value;
+                                      });
+                                    },
+                                  ),
                                   SizedBox(height: 8),
                                   TextFormField(
                                     decoration: InputDecoration(
                                       hintText: '№ нарушения',
-                                        border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30.0),
-      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+                                          borderRadius: BorderRadius.circular(30.0),
+                                        ),
                                     ),
                                     onChanged: handleIdChange,
                                     keyboardType: TextInputType.number,
@@ -190,9 +198,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   SizedBox(height: 8),
                                   TextFormField(
                                     decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30.0),
-      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
+                                            borderRadius: BorderRadius.circular(30.0),
+                                        ),
                                       hintText: 'Гос номер',
                                     ),
                                     onChanged: handleNumberAutoChange,
@@ -201,35 +213,37 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   TextFormField(
                                     decoration: InputDecoration(
                                       hintText: 'Описание',
-                                        border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30.0),
-      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                             focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
+                                            borderRadius: BorderRadius.circular(30.0),
+                                        ),
                                     ),
                                     onChanged: handleTitleChange,
                                   ),
-                                                                    SizedBox(height: 8),
-
+                                  SizedBox(height: 8),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                            ElevatedButton(
-                                              onPressed: applyFilters,
-                                              child: Container(
-                                                padding: EdgeInsets.all(16),
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  'Применить',
-                                                  style: TextStyle(fontSize: 20, color: Colors.white),
-                                                ),
-                                              ),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Color(0xFF3BB5E9),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(30),
-                                                ),
-                                              ),
-                                            ),
+                                      ElevatedButton(
+                                        onPressed: applyFilters,
+                                        child: Container(
+                                          padding: EdgeInsets.all(16),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Применить',
+                                            style: TextStyle(fontSize: 20, color: Colors.white),
+                                          ),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color(0xFF3BB5E9),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                          ),
+                                        ),
+                                      ),
                                       IconButton(
                                         onPressed: () {
                                           Navigator.pop(context);
