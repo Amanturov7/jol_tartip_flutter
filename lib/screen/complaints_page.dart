@@ -21,7 +21,10 @@ class ComplaintsPage extends StatelessWidget {
               Tab(text: 'Отзывы'),
               Tab(text: 'События'),
             ],
-          ),
+ labelColor: Color(0xFF3BB5E9), // Цвет активного таба
+            indicator: UnderlineTabIndicator( // Закрашиваем нижнюю границу
+              borderSide: BorderSide( color: Color(0xFF3BB5E9)), // Устанавливаем цвет и ширину границы
+            ),          ),
           body: TabBarView(
             children: [
               ApplicationsList(),

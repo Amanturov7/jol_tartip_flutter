@@ -90,6 +90,10 @@ class _HomePageState extends State<HomePage> {
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30.0),
       ),
+       focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
       suffixIcon: InkWell(
         onTap: () {
           _search();

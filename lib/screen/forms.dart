@@ -7,27 +7,144 @@ class FormsPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ViolationFormPage()),
-    );
-  },
-  child: Text('Нарушения'),
-),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+            height: 70, // Задаем фиксированную высоту для кнопки
 
-        ElevatedButton(
-          onPressed: () {
-            // Действия при нажатии на кнопку "Отзывы"
-          },
-          child: Text('Отзывы'),
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ViolationFormPage()),
+              );
+            },
+            child: Text(
+              'Нарушение',
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF3BB5E9),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
         ),
-        ElevatedButton(
-          onPressed: () {
-            // Действия при нажатии на кнопку "События"
-          },
-          child: Text('События'),
+      
+        SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+            height: 70, // Задаем фиксированную высоту для кнопки
+
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ViolationFormPage()),
+              );
+            },
+            child: Text('Отзыв', style: TextStyle(fontSize: 20, color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF3BB5E9),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+            height: 70, // Задаем фиксированную высоту для кнопки
+
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ViolationFormPage()),
+              );
+            },
+            child: Text('Событие', style: TextStyle(fontSize: 20, color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF3BB5E9),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ),
+       
+        SizedBox(height: 10),
+
+           Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+            height: 70, // Задаем фиксированную высоту для кнопки
+
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ViolationFormPage()),
+              );
+            },
+            child: Text('Штраф', style: TextStyle(fontSize: 20, color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF3BB5E9),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ),
+
+         SizedBox(height: 10),
+
+           Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+            height: 70, // Задаем фиксированную высоту для кнопки
+
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ViolationFormPage()),
+              );
+            },
+            child: Text('Уведомление', style: TextStyle(fontSize: 20, color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF3BB5E9),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ),
+         SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16),
+            height: 70, // Задаем фиксированную высоту для кнопки
+
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ViolationFormPage()),
+              );
+            },
+            child: Text('SOS', style: TextStyle(fontSize: 20, color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
         ),
       ],
     );
