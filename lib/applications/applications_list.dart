@@ -116,6 +116,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Нарушения'),
         actions: [
@@ -133,6 +134,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
+                    isScrollControlled: true,
                     builder: (BuildContext context) {
                       return StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
@@ -142,54 +144,92 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Фильтры'),
                                   SizedBox(height: 16),
                                   // Filter options UI here
-                                  Text('Нарушения'),
-                                  Column(
-                                    children: filterOptions.map((factor) {
-                                      return RadioListTile(
-                                        title: Text(factor['title']),
-                                        value: factor['id'].toInt(),
-                                        groupValue: selectedFilter,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selectedFilter = value as int?;
-                                          });
-                                        },
-                                      );
-                                    }).toList(),
-                                  ),
+                                DropdownButtonFormField<int?>(
+  value: selectedFilter,
+  decoration: InputDecoration(
+    hintText: 'Выберите нарушение',
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30.0),
+    ),
+    contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+  ),
+  items: [
+    DropdownMenuItem<int?>(
+      value: null,
+      child: Text('Выберите нарушение'),
+    ),
+    ...filterOptions.map<DropdownMenuItem<int?>>((factor) {
+      return DropdownMenuItem<int?>(
+        value: factor['id'].toInt(),
+        child: Text(factor['title']),
+      );
+    }).toList(),
+  ],
+  onChanged: (value) {
+    setState(() {
+      selectedFilter = value;
+    });
+  },
+),
+
+
+
                                   SizedBox(height: 8),
-                                  TextField(
+                                  TextFormField(
                                     decoration: InputDecoration(
-                                      hintText: 'ID',
+                                      hintText: '№ нарушения',
+                                        border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
                                     ),
                                     onChanged: handleIdChange,
                                     keyboardType: TextInputType.number,
                                   ),
                                   SizedBox(height: 8),
-                                  TextField(
+                                  TextFormField(
                                     decoration: InputDecoration(
-                                      hintText: 'Номер авто',
+                                        border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+                                      hintText: 'Гос номер',
                                     ),
                                     onChanged: handleNumberAutoChange,
                                   ),
                                   SizedBox(height: 8),
-                                  TextField(
+                                  TextFormField(
                                     decoration: InputDecoration(
-                                      hintText: 'Заголовок',
+                                      hintText: 'Описание',
+                                        border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
                                     ),
                                     onChanged: handleTitleChange,
                                   ),
+                                                                    SizedBox(height: 8),
+
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      ElevatedButton(
-                                        onPressed: applyFilters,
-                                        child: Text('Применить'),
-                                      ),
+                                            ElevatedButton(
+                                              onPressed: applyFilters,
+                                              child: Container(
+                                                padding: EdgeInsets.all(16),
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  'Применить',
+                                                  style: TextStyle(fontSize: 20, color: Colors.white),
+                                                ),
+                                              ),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color(0xFF3BB5E9),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(30),
+                                                ),
+                                              ),
+                                            ),
                                       IconButton(
                                         onPressed: () {
                                           Navigator.pop(context);

@@ -280,12 +280,24 @@ Future<void> selectDateAndTime() async {
                 child: Text('Take Photo'),
               ),
               ElevatedButton(
-                onPressed: () {
-                  // Submit form
-                  submitForm();
-                },
-                child: Text('Submit'),
-              ),
+    onPressed: submitForm,
+    child: Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16),
+      alignment: Alignment.center,
+      child: Text(
+        'Применить',
+        style: TextStyle(fontSize: 20, color: Colors.white),
+      ),
+    ),
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Color(0xFF3BB5E9),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      minimumSize: Size(double.infinity, 70),
+    ),
+  ),
             ],
           ),
         ),
