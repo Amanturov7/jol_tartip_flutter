@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jol_tartip_flutter/forms/review_form.dart';
 import '../forms/application_form.dart';
 
 class FormsPage extends StatelessWidget {
@@ -42,7 +43,7 @@ class FormsPage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ViolationFormPage()),
+                MaterialPageRoute(builder: (context) => ReviewForm()),
               );
             },
             child: Text('Отзыв', style: TextStyle(fontSize: 20, color: Colors.white)),
