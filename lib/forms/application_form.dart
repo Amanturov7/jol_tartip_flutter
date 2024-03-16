@@ -126,33 +126,28 @@ Future<void> uploadFile(int applicationId) async {
   var url = Uri.parse('http://172.26.192.1:8080/rest/attachments/upload');
   var request = http.MultipartRequest('POST', url);
 
-  // Добавляем данные 'dto' в виде JSON-строки
+ 
   request.fields['dto'] = jsonEncode({
   'type': 'application',
   'originName': File(_image!.path).path.split('/').last,
-  'description': 'File description', // Добавьте описание здесь
-  'userId': userId.toString(), // Добавьте идентификатор пользователя здесь
-  'applicationsId': applicationId.toString(), // Добавьте идентификатор заявки здесь
-  // Добавьте остальные поля 'dto' здесь...
+  'description': 'File description', 
+  'userId': userId.toString(), 
+  'applicationsId': applicationId.toString(),
 });
 
-  // Добавляем остальные поля запроса
 
-  // Добавляем файл как часть запроса
   request.files.add(await http.MultipartFile.fromPath(
     'file',
     _image!.path,
-    contentType: MediaType('image', 'jpeg'), // Можете уточнить contentType по необходимости
+    contentType: MediaType('image', 'jpeg'), 
   ));
 
   try {
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
     if (response.statusCode == 200) {
-      // Файл успешно загружен
       print('Файл успешно загружен');
     } else {
-      // Не удалось загрузить файл
       print('Не удалось загрузить файл. Статус код: ${response.statusCode}');
     }
   } catch (error) {
@@ -160,7 +155,6 @@ Future<void> uploadFile(int applicationId) async {
   }
 }
 
-// Метод для выбора даты и времени
 Future<void> selectDateAndTime() async {
   final DateTime? pickedDateAndTime = await showDatePicker(
     context: context,
@@ -195,7 +189,7 @@ Future<void> selectDateAndTime() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Обращение о нарушении'),
+        title: Text('Нарушение'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -214,7 +208,7 @@ Future<void> selectDateAndTime() async {
                                         borderRadius: BorderRadius.circular(30.0),
                                       ),
                                          focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
       borderRadius: BorderRadius.circular(30.0),
     ),),
                                       
@@ -230,7 +224,7 @@ Future<void> selectDateAndTime() async {
                                         borderRadius: BorderRadius.circular(30.0),
                                       ),
                                          focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
       borderRadius: BorderRadius.circular(30.0),
     ),),
                 
@@ -247,11 +241,11 @@ Future<void> selectDateAndTime() async {
     ),
     suffixIcon: Icon(
       Icons.calendar_today,
-      color: Color(0xFF3BB5E9), // Установите желаемый цвет для иконки календаря
+      color: Color(0xFF3BB5E9), 
     ),
 
     focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
       borderRadius: BorderRadius.circular(30.0),
     ),
   ),
@@ -265,7 +259,7 @@ Future<void> selectDateAndTime() async {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                      focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
       borderRadius: BorderRadius.circular(30.0),
     ),
                 ),
@@ -284,7 +278,7 @@ Future<void> selectDateAndTime() async {
                 onChanged: (value) {
                   setState(() {
                     selectedViolationIndex = value;
-                    typeViolationsId = value ?? 0; // Если value равно null, используйте значение по умолчанию, например, 0
+                    typeViolationsId = value ?? 0; 
                   });
                 },
               ),
@@ -301,14 +295,13 @@ Future<void> selectDateAndTime() async {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+                    borderSide: BorderSide(color: Color(0xFF3BB5E9)),
                     borderRadius: BorderRadius.circular(30.0),
                   ),),
               ),
               SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () async {
-                  // Get image from gallery
                   var image = await getImageFromGallery();
                   setState(() {
                     _image = image;
@@ -319,7 +312,6 @@ Future<void> selectDateAndTime() async {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  // Take a photo with camera
                   var image = await takePhoto();
                   setState(() {
                     _image = image;

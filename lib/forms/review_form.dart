@@ -1,14 +1,15 @@
+
+
+
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:convert';
 import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart';
+
 class ReviewForm extends StatefulWidget {
   @override
   _ReviewFormPageState createState() => _ReviewFormPageState();
@@ -24,12 +25,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
   String locationAddress = '';
   String description = '';
   int userId = 0;
-  bool isMapModalOpen = false;
-  Map<String, double> selectedCoordinate = {'lat': 0, 'lon': 0};
-  int roadId = 0;
-  int lightId = 0;
-  int roadSignId = 0;
-  int ecologicFactorsId = 0;
   File? _image;
 
   @override
@@ -57,13 +52,10 @@ class _ReviewFormPageState extends State<ReviewForm> {
     }
   }
 
-
-
   void handleReviewTypeChange(String? type) async {
     setState(() {
       reviewType = type;
-          selectedOption = null; // Обнуляем выбранный вид отзыва при изменении типа
-
+      selectedOption = null;
     });
 
     try {
@@ -102,7 +94,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
     }
   }
 
-
   Future<File?> takePhoto() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
@@ -113,7 +104,8 @@ class _ReviewFormPageState extends State<ReviewForm> {
       return null;
     }
   }
-void handleSelectImage() async {
+
+  void handleSelectImage() async {
     final picker = ImagePicker();
     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
@@ -124,6 +116,30 @@ void handleSelectImage() async {
     }
   }
 
+  void handleSubmit() async {
+    // Check if an image is selected
+    if (_image == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Ошибка'),
+            content: Text('Пожалуйста, выберите изображение перед сохранением.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+
   Future<void> uploadFile(int reviewsId) async {
     var url = Uri.parse('http://172.26.192.1:8080/rest/attachments/upload');
     var request = http.MultipartRequest('POST', url);
@@ -131,9 +147,9 @@ void handleSelectImage() async {
     request.fields['dto'] = jsonEncode({
       'type': 'review',
       'originName': _image!.path.split('/').last,
-      'description': 'File description', // Добавьте описание здесь
-      'userId': userId.toString(), // Добавьте идентификатор пользователя здесь
-      'reviewsId': reviewsId.toString(), // Добавьте идентификатор заявки здесь
+      'description': 'File description', 
+      'userId': userId.toString(), 
+      'reviewsId': reviewsId.toString(), 
     });
 
     request.files.add(await http.MultipartFile.fromPath(
@@ -156,235 +172,253 @@ void handleSelectImage() async {
   }
 
 
-void handleSubmit() async {
-  if (_image == null) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Ошибка'),
-          content: Text('Пожалуйста, выберите изображение перед сохранением.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-    return;
-  }
 
-  if (locationAddress.isEmpty) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Ошибка'),
-          content: Text('Пожалуйста, укажите адрес перед сохранением заявки.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-    return;
-  }
+    if (locationAddress.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Ошибка'),
+            content: Text('Пожалуйста, укажите адрес перед сохранением заявки.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
 
-  try {
-    final response = await http.post(
-      Uri.parse('http://172.26.192.1:8080/rest/reviews/create'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'lat': selectedCoordinate['lat'],
-        'lon': selectedCoordinate['lon'],
-        'locationAddress': locationAddress,
-        'description': description,
-        'userId': userId,
-        'reviewType': reviewType,
-      }),
-    );
+    // Handle form submission
+    try {
+      final response = await http.post(
+        Uri.parse('http://172.26.192.1:8080/rest/reviews/create'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'lat': lat,
+          'lon': lon,
+          'locationAddress': locationAddress,
+          'description': description,
+          'userId': userId,
+          'reviewType': reviewType,
+        }),
+      );
 
-    final responseData = jsonDecode(response.body);
+      final responseData = jsonDecode(response.body);
 
-
+      // Upload image
       if (_image != null) {
-          await uploadFile(responseData['id']);
-        }
+        await uploadFile(responseData['id']);
+      }
 
-    print('Review created: $responseData');
+      // Reset form fields
+      setState(() {
+        reviewType = null;
+        selectedOption = null;
+        locationAddress = '';
+        description = '';
+        _image = null;
+      });
 
-    // Clear form fields and image after successful submission
-    setState(() {
-      reviewType = null;
-      selectedOption = null;
-      locationAddress = '';
-      description = '';
-      _image = null;
-    });
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Успех'),
-          content: Text('Отзыв успешно создан.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  } catch (error) {
-    print('Error creating review: $error');
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Ошибка'),
-          content: Text('Произошла ошибка при создании отзыва: $error'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+      // Show success dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Успех'),
+            content: Text('Отзыв успешно создан.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (error) {
+      // Show error dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Ошибка'),
+            content: Text('Произошла ошибка при создании отзыва: $error'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Review Form'),
+        title: Text('Отзыв'),
       ),
-      body: Form(
-        child: Column(
-          children: [
-            DropdownButton<String>(
-              value: reviewType,
-              
-              hint: Text('Выберите тип отзыва'),
-              onChanged: handleReviewTypeChange,
-              items: reviewTypes.map((String type) {
-                return DropdownMenuItem<String>(
-                  
-                  value: type,
-                  child: Text(type),
-                );
-              }).toList(),
-            ),
-            DropdownButton<String>(
-              value: selectedOption,
-              
-              hint: Text('Выберите вид отзыва'),
-              onChanged: (String? value) {
-                setState(() {
-                  selectedOption = value;
-                });
-              },
-              items: options.map((String option) {
-                return DropdownMenuItem<String>(
-                  value: option,
-                  child: Text(option),
-                );
-              }).toList(),
-            ),
-                    
-                            SizedBox(height: 8),
-
-            TextFormField(
-              onChanged: (value) {
-                setState(() {
-                  locationAddress = value;
-                });
-              },
-              decoration: InputDecoration(hintText: 'Адрес',  border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(30.0),
-                                      ),
-                                         focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
-      borderRadius: BorderRadius.circular(30.0),
-    ),),
-            ),
-                          SizedBox(height: 8),
-
-            TextFormField(
-              onChanged: (value) {
-                setState(() {
-                  description = value;
-                });
-              },
-              decoration: InputDecoration(hintText: 'Описание',  border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(30.0),
-                                      ),
-                                         focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
-      borderRadius: BorderRadius.circular(30.0),
-    ),),
-            ),
-                  SizedBox(height: 8),
-
-             ElevatedButton(
-              onPressed: handleSelectImage,
-              child: Text('Выбрать изображение'),
-            ),
-                ElevatedButton(
-                onPressed: () async {
-                  // Take a photo with camera
-                  var image = await takePhoto();
-                  setState(() {
-                    _image = image;
-                  });
-                },
-                
-                child: Text('Открыть камеру',),
-              ),
-                          SizedBox(height: 8),
-
-           ElevatedButton(
-    onPressed: handleSubmit,
-    child: Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16),
-      alignment: Alignment.center,
-      child: Text(
-        'Сохранить',
-        style: TextStyle(fontSize: 20, color: Colors.white),
-      ),
-    ),
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Color(0xFF3BB5E9),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
-      ),
-      minimumSize: Size(double.infinity, 70),
-    ),
-  ),
-          ],
+      body: SingleChildScrollView(
+        child:Column(
+  crossAxisAlignment: CrossAxisAlignment.stretch,
+  children: [
+    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: DropdownButtonFormField<String>(
+        value: reviewType,
+        decoration: InputDecoration(
+          hintText: 'Выберите тип отзыва',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+            borderRadius: BorderRadius.circular(30.0),
+          ),
         ),
+        onChanged: handleReviewTypeChange,
+        items: reviewTypes.map((String type) {
+          return DropdownMenuItem<String>(
+            value: type,
+            child: Text(type),
+          );
+        }).toList(),
+      ),
+    ),
+    SizedBox(height: 8),
+    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: DropdownButtonFormField<String>(
+        value: selectedOption,
+        decoration: InputDecoration(
+          hintText: 'Выберите вид отзыва',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+        ),
+        onChanged: (String? value) {
+          setState(() {
+            selectedOption = value;
+          });
+        },
+        items: options.map((String option) {
+          return DropdownMenuItem<String>(
+            value: option,
+            child: Text(option),
+          );
+        }).toList(),
+      ),
+    ),
+    SizedBox(height: 8),
+    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: TextFormField(
+        onChanged: (value) {
+          setState(() {
+            locationAddress = value;
+          });
+        },
+        decoration: InputDecoration(
+          hintText: 'Адрес',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+        ),
+      ),
+    ),
+    SizedBox(height: 8),
+    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: TextFormField(
+        onChanged: (value) {
+          setState(() {
+            description = value;
+          });
+        },
+        decoration: InputDecoration(
+          hintText: 'Описание',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+        ),
+      ),
+    ),
+    SizedBox(height: 8),
+    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: ElevatedButton(
+        onPressed: handleSelectImage,
+        child: Text('Выбрать изображение'),
+      ),
+    ),
+    SizedBox(height: 8),
+    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: ElevatedButton(
+        onPressed: () async {
+          var image = await takePhoto();
+          setState(() {
+            _image = image;
+          });
+        },
+        child: Text('Открыть камеру'),
+      ),
+    ),
+    SizedBox(height: 8),
+    Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: ElevatedButton(
+        onPressed: handleSubmit,
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(16),
+          alignment: Alignment.center,
+          child: Text(
+            'Сохранить',
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFF3BB5E9),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          minimumSize: Size(double.infinity, 70),
+        ),
+      ),
+    ),
+  ],
+)
+
+
+
       ),
     );
   }
