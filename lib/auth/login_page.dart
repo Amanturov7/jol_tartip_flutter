@@ -16,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      final String apiUrl = 'http://localhost:8080/auth/authenticate';
+      final String apiUrl = 'http://172.26.192.1:8080/auth/authenticate';
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{

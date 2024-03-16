@@ -10,12 +10,13 @@ class NotificationsPage extends StatelessWidget {
           title: Text('Уведомления'),
           bottom: TabBar(
             tabs: [
+              Tab(text: 'Инфо'),
               Tab(text: 'Напоминание'),
               Tab(text: 'Рекомендация'),
-              Tab(text: 'Информирование'),
               
             ],
-             labelColor: Color(0xFF3BB5E9), // Цвет активного таба
+             labelColor: Color(0xFF3BB5E9),
+                             labelStyle:  TextStyle(fontSize: 13.0),
             indicator: UnderlineTabIndicator( // Закрашиваем нижнюю границу
               borderSide: BorderSide( color: Color(0xFF3BB5E9)), // Устанавливаем цвет и ширину границы
             ),  

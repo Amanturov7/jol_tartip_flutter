@@ -277,7 +277,10 @@ class _ReviewFormPageState extends State<ReviewForm> {
         child:Column(
   crossAxisAlignment: CrossAxisAlignment.stretch,
   children: [
+                  SizedBox(height: 16),
+
     Container(
+      
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: DropdownButtonFormField<String>(
         value: reviewType,

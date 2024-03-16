@@ -28,8 +28,8 @@ class ComplaintsPage extends StatelessWidget {
           body: TabBarView(
             children: [
               ApplicationsList(),
-              ReviewsList(), // Вставляем ReviewsList в разделе отзывов
-              ApplicationsList(),
+              ReviewsList(),
+              EventsList(),
             ],
           ),
         ),
