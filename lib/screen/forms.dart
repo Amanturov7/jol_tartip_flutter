@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jol_tartip_flutter/forms/event_form.dart';
 import 'package:jol_tartip_flutter/forms/review_form.dart';
 import '../forms/application_form.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class FormsPage extends StatelessWidget {
   @override
@@ -12,7 +13,7 @@ class FormsPage extends StatelessWidget {
         Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 16),
-            height: 70, // Задаем фиксированную высоту для кнопки
+            height: 70, 
 
           child: ElevatedButton(
             onPressed: () {
@@ -22,7 +23,7 @@ class FormsPage extends StatelessWidget {
               );
             },
             child: Text(
-              'Нарушение',
+              'violation'.tr(),
               style: TextStyle(fontSize: 20, color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(
@@ -38,7 +39,7 @@ class FormsPage extends StatelessWidget {
         Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 16),
-            height: 70, // Задаем фиксированную высоту для кнопки
+            height: 70, 
 
           child: ElevatedButton(
             onPressed: () {
@@ -47,7 +48,7 @@ class FormsPage extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => ReviewForm()),
               );
             },
-            child: Text('Отзыв', style: TextStyle(fontSize: 20, color: Colors.white)),
+            child: Text('review'.tr(), style: TextStyle(fontSize: 20, color: Colors.white)),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF3BB5E9),
               shape: RoundedRectangleBorder(
@@ -60,7 +61,7 @@ class FormsPage extends StatelessWidget {
         Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 16),
-            height: 70, // Задаем фиксированную высоту для кнопки
+            height: 70, 
 
           child: ElevatedButton(
             onPressed: () {
@@ -69,7 +70,7 @@ class FormsPage extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => EventFormPage()),
               );
             },
-            child: Text('Событие', style: TextStyle(fontSize: 20, color: Colors.white)),
+            child: Text('event'.tr(), style: TextStyle(fontSize: 20, color: Colors.white)),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF3BB5E9),
               shape: RoundedRectangleBorder(
@@ -79,58 +80,11 @@ class FormsPage extends StatelessWidget {
           ),
         ),
        
-        SizedBox(height: 10),
-
-           Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 16),
-            height: 70, // Задаем фиксированную высоту для кнопки
-
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ViolationFormPage()),
-              );
-            },
-            child: Text('Штраф', style: TextStyle(fontSize: 20, color: Colors.white)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF3BB5E9),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-          ),
-        ),
-
-         SizedBox(height: 10),
-
-           Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 16),
-            height: 70, // Задаем фиксированную высоту для кнопки
-
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ViolationFormPage()),
-              );
-            },
-            child: Text('Уведомление', style: TextStyle(fontSize: 20, color: Colors.white)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF3BB5E9),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-          ),
-        ),
          SizedBox(height: 10),
         Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 16),
-            height: 70, // Задаем фиксированную высоту для кнопки
+            height: 70,
 
           child: ElevatedButton(
             onPressed: () {

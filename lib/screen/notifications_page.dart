@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class NotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // Количество табов
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Уведомления'),
+          title: Text('notifications'.tr()),
           bottom: TabBar(
             tabs: [
-              Tab(text: 'Инфо'),
-              Tab(text: 'Напоминание'),
-              Tab(text: 'Рекомендация'),
+              Tab(text: 'info'.tr()),
+              Tab(text: 'reminder'.tr()),
+              Tab(text: 'recommendation'.tr()),
               
             ],
              labelColor: Color(0xFF3BB5E9),
                              labelStyle:  TextStyle(fontSize: 13.0),
-            indicator: UnderlineTabIndicator( // Закрашиваем нижнюю границу
-              borderSide: BorderSide( color: Color(0xFF3BB5E9)), // Устанавливаем цвет и ширину границы
+            indicator: UnderlineTabIndicator( 
+              borderSide: BorderSide( color: Color(0xFF3BB5E9)), 
             ),  
           ),
         ),
@@ -42,15 +43,13 @@ class NotificationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Предположим, что у нас есть список уведомлений для каждого статуса
-    // Вместо этого вы можете использовать свой собственный список уведомлений
+
     List<String> notifications = [
       'Уведомление 1',
       'Уведомление 2',
       'Уведомление 3',
     ];
 
-    // Фильтруем уведомления по статусу
     List<String> filteredNotifications =
         notifications.where((notification) => notification.contains(status)).toList();
 

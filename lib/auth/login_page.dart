@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:jol_tartip_flutter/main.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -62,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Вход'),
+        title: Text('sign_in'.tr()),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -80,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  hintText: 'Логин',
+                  hintText: 'login'.tr(),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
@@ -102,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 obscureText: true,
                 decoration: InputDecoration(
-                  hintText: 'Пароль',
+                  hintText: 'password'.tr(),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
@@ -123,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
       padding: EdgeInsets.all(16),
       alignment: Alignment.center,
       child: Text(
-        'Войти',
+        'login_in'.tr(),
         style: TextStyle(fontSize: 20, color: Colors.white),
       ),
     ),
@@ -146,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                       // Действия при нажатии на кнопку "Забыли пароль?"
                     },
                     child: Text(
-                      'Забыли пароль?',
+                      'forgot_password'.tr(),
                       style: TextStyle(color: Color(0xFF3BB5E9)),
                     ),
                   ),
@@ -158,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                       // Действия при нажатии на кнопку "Регистрация"
                     },
                     child: Text(
-                      'Регистрация',
+                      'register'.tr(),
                       style: TextStyle(color: Color(0xFF3BB5E9)),
                     ),
                   ),

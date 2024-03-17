@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 
 class SearchResultsPage extends StatefulWidget {
   final String searchQuery;
@@ -47,7 +48,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Результаты поиска'),
+        title: Text('seacrh_result'.tr()),
       ),
       body: isLoading
           ? Center(
@@ -87,7 +88,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                                 ),
                                 SizedBox(height: 8),
                                 Text(
-                                  'Нарушение № ${application['id']}',
+                                  'violation_number'.tr() +  ' ${application['id']}',
                                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -99,7 +100,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   ),
                 )
               : Center(
-                  child: Text('Нарушений нет!', style: TextStyle(color: Colors.green, fontSize: 20),),
+                  child: Text('no_violations'.tr(), style: TextStyle(color: Colors.green, fontSize: 20),),
                 ),
     );
   }

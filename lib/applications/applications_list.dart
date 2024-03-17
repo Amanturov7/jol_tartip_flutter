@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 
 class ApplicationsList extends StatefulWidget {
   @override
@@ -118,7 +119,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Нарушения'),
+        title: Text('violations'.tr()),
         actions: [
           Stack(
             alignment: Alignment.center,
@@ -165,7 +166,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     items: [
                                       DropdownMenuItem<int?>(
                                         value: null,
-                                        child: Text('Выберите тип нарушения',         ),
+                                        child: Text('select_violation_type'.tr()),
                                       ),
                                       ...filterOptions.map<DropdownMenuItem<int?>>((factor) {
                                         return DropdownMenuItem<int?>(
@@ -183,7 +184,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   SizedBox(height: 8),
                                   TextFormField(
                                     decoration: InputDecoration(
-                                      hintText: '№ нарушения',
+                                      hintText: 'number_violation'.tr(),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(30.0),
                                       ),
@@ -205,14 +206,14 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                             borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
                                             borderRadius: BorderRadius.circular(30.0),
                                         ),
-                                      hintText: 'Гос номер',
+                                      hintText: 'gos_nomer'.tr(),
                                     ),
                                     onChanged: handleNumberAutoChange,
                                   ),
                                   SizedBox(height: 8),
                                   TextFormField(
                                     decoration: InputDecoration(
-                                      hintText: 'Описание',
+                                      hintText: 'description'.tr(),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(30.0),
                                       ),
@@ -233,7 +234,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                           padding: EdgeInsets.all(16),
                                           alignment: Alignment.center,
                                           child: Text(
-                                            'Применить',
+                                            'accept'.tr(),
                                             style: TextStyle(fontSize: 20, color: Colors.white),
                                           ),
                                         ),
@@ -280,7 +281,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
           ),
           IconButton(
             icon: Icon(Icons.clear),
-            tooltip: 'Сбросить фильтры',
+            tooltip: 'reset_filters'.tr(),
             onPressed: resetFilters,
           ),
         ],
@@ -319,7 +320,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Нарушение № ${application['id']}',
+                          'violation_number'.tr()+ ' ${application['id']}',
                           style: TextStyle(
                               fontSize: 12, fontWeight: FontWeight.bold),
                         ),

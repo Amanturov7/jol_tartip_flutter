@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:jol_tartip_flutter/main.dart';
+import 'package:jol_tartip_flutter/settings_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../auth/login_page.dart';
 import '../auth/signup_page.dart';
 import '../user_data_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ProfilePage extends StatelessWidget {
   @override
@@ -14,7 +16,7 @@ class ProfilePage extends StatelessWidget {
         if (snapshot.hasData) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('Профиль'),
+              title: Text('profile'.tr()),
             ),
             body: Center(
               child: Column(
@@ -40,7 +42,7 @@ class ProfilePage extends StatelessWidget {
                         },
                         
                         child: Text(
-                          'Мои данные',
+                          'my_details'.tr(),
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -64,7 +66,7 @@ class ProfilePage extends StatelessWidget {
                           );
                         },
                         child: Text(
-                          'Зарегистрироваться',
+                          'to_register'.tr(),
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -89,7 +91,7 @@ class ProfilePage extends StatelessWidget {
                           );
                         },
                         child: Text(
-                          'Войти',
+                          'sign_in'.tr(),
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -117,7 +119,30 @@ class ProfilePage extends StatelessWidget {
                           );
                         },
                         child: Text(
-                          'Выйти',
+                          'log_out'.tr(),
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF3BB5E9),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                       height: 70,
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SettingsPage()),
+                          );
+                        },
+                        child: Text(
+                          'settings'.tr(),
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -133,7 +158,7 @@ class ProfilePage extends StatelessWidget {
             ),
           );
         } else if (snapshot.hasError) {
-          return Text('Ошибка: ${snapshot.error}');
+          return Text('error'.tr() + '${snapshot.error}');
         } else {
           return CircularProgressIndicator();
         }

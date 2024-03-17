@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 
 class ReviewsList extends StatefulWidget {
   @override
@@ -103,7 +104,7 @@ class _ReviewsListState extends State<ReviewsList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Отзывы'),
+        title: Text('reviews'.tr()),
         actions: [
           Stack(
             alignment: Alignment.center,
@@ -265,7 +266,7 @@ class _ReviewsListState extends State<ReviewsList> {
                                           padding: EdgeInsets.all(16),
                                           alignment: Alignment.center,
                                           child: Text(
-                                            'Применить',
+                                            'accept'.tr(),
                                             style: TextStyle(fontSize: 20, color: Colors.white),
                                           ),
                                         ),
@@ -312,7 +313,7 @@ class _ReviewsListState extends State<ReviewsList> {
           ),
           IconButton(
             icon: Icon(Icons.clear),
-            tooltip: 'Сбросить фильтры',
+            tooltip: 'reset_filters'.tr(),
             onPressed: resetFilters,
           ),
         ],
@@ -345,7 +346,7 @@ class _ReviewsListState extends State<ReviewsList> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Отзыв № ${review['id']}',
+                  'review_number'.tr() + '${review['id']}',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                 ),
               ],

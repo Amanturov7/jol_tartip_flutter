@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'terms_page.dart'; // Импортируем файл с страницей условий пользования
-
+import 'terms_page.dart'; 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:jol_tartip_flutter/main.dart';
 
 class SignupPage extends StatefulWidget {
@@ -61,7 +61,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Регистрация'),
+        title: Text('register'.tr()),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -80,7 +80,7 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: 'Логин',
+                    hintText: 'login'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -102,7 +102,7 @@ class _SignupPageState extends State<SignupPage> {
                   },
                   obscureText: true,
                   decoration: InputDecoration(
-                    hintText: 'Пароль',
+                    hintText: 'password'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -122,7 +122,7 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: 'Адрес',
+                    hintText: 'address'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -142,7 +142,7 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: 'ИНН',
+                    hintText: 'inn'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -162,7 +162,7 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: 'Пасспорт Серия №',
+                    hintText: 'passport_serial'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -182,7 +182,7 @@ class _SignupPageState extends State<SignupPage> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: 'Номер телефона',
+                    hintText: 'phone_number'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -218,7 +218,7 @@ class _SignupPageState extends State<SignupPage> {
                         );
                       },
                       child: Text(
-                        'Я согласен с условиями пользования',
+                        'i_agree'.tr(),
                         style: TextStyle(
                           color: Colors.blue,
                         ),
@@ -230,7 +230,7 @@ class _SignupPageState extends State<SignupPage> {
                 ElevatedButton(
                   onPressed: _agreedToTerms ? _signup : null,
                   child: Text(
-                    'Зарегистрироваться',
+                    'to_register'.tr(),
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(

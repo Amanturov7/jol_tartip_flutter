@@ -1,7 +1,4 @@
-
-
-
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -123,8 +120,8 @@ class _ReviewFormPageState extends State<ReviewForm> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Ошибка'),
-            content: Text('Пожалуйста, выберите изображение перед сохранением.'),
+            title: Text('error'.tr()),
+            content: Text('please_select_image'.tr()),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -178,8 +175,8 @@ class _ReviewFormPageState extends State<ReviewForm> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Ошибка'),
-            content: Text('Пожалуйста, укажите адрес перед сохранением заявки.'),
+            title: Text('error'.tr()),
+            content: Text('please_address'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -232,8 +229,8 @@ class _ReviewFormPageState extends State<ReviewForm> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Успех'),
-            content: Text('Отзыв успешно создан.'),
+            title: Text('success'.tr()),
+            content: Text('reviw_saved'.tr()),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -251,8 +248,8 @@ class _ReviewFormPageState extends State<ReviewForm> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Ошибка'),
-            content: Text('Произошла ошибка при создании отзыва: $error'),
+            title: Text('error'.tr()),
+            content: Text('review_save_error'.tr() +' $error'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -271,7 +268,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Отзыв'),
+        title: Text('review'.tr()),
       ),
       body: SingleChildScrollView(
         child:Column(
@@ -285,7 +282,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
       child: DropdownButtonFormField<String>(
         value: reviewType,
         decoration: InputDecoration(
-          hintText: 'Выберите тип отзыва',
+          hintText: 'select_review_type'.tr(),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
@@ -309,7 +306,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
       child: DropdownButtonFormField<String>(
         value: selectedOption,
         decoration: InputDecoration(
-          hintText: 'Выберите вид отзыва',
+          hintText: 'select_review_type'.tr(),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
@@ -341,7 +338,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
           });
         },
         decoration: InputDecoration(
-          hintText: 'Адрес',
+          hintText: 'address'.tr(),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
@@ -362,7 +359,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
           });
         },
         decoration: InputDecoration(
-          hintText: 'Описание',
+          hintText: 'description'.tr(),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
@@ -378,7 +375,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: ElevatedButton(
         onPressed: handleSelectImage,
-        child: Text('Выбрать изображение'),
+        child: Text('select_image'.tr()),
       ),
     ),
     SizedBox(height: 8),
@@ -391,7 +388,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
             _image = image;
           });
         },
-        child: Text('Открыть камеру'),
+        child: Text('open_camera'.tr()),
       ),
     ),
     SizedBox(height: 8),
@@ -404,7 +401,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
           padding: EdgeInsets.all(16),
           alignment: Alignment.center,
           child: Text(
-            'Сохранить',
+            'save'.tr(),
             style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class UserDataPage extends StatefulWidget {
   @override
@@ -46,7 +47,7 @@ class _UserDataPageState extends State<UserDataPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Мои данные'),
+        title: Text('my_details'.tr()),
       ),
       body: Center(
         child: Column(

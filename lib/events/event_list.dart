@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 
 class Event {
   final String title;
@@ -49,7 +50,7 @@ class _EventsListState extends State<EventsList> {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: Text('События'),
+      title: Text('events'.tr()),
     ),
     body: ListView.builder(
       itemCount: events.length,
@@ -73,7 +74,7 @@ Widget build(BuildContext context) {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Адрес: ${event.address}',
+                    'address'.tr() + ' ${event.address}',
                     style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
                   ),
                 ],

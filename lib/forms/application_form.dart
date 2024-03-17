@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ViolationFormPage extends StatefulWidget {
   
@@ -189,7 +190,7 @@ Future<void> selectDateAndTime() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Нарушение'),
+        title: Text('violation'.tr()),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -204,7 +205,7 @@ Future<void> selectDateAndTime() async {
                     description = value;
                   });
                 },
-                decoration: InputDecoration(hintText: 'Описание',   border: OutlineInputBorder(
+                decoration: InputDecoration(hintText: 'description'.tr(),   border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(30.0),
                                       ),
                                          focusedBorder: OutlineInputBorder(
@@ -220,7 +221,7 @@ Future<void> selectDateAndTime() async {
                     place = value;
                   });
                 },
-                decoration: InputDecoration(hintText: 'Адрес',  border: OutlineInputBorder(
+                decoration: InputDecoration(hintText: 'address'.tr(),  border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(30.0),
                                       ),
                                          focusedBorder: OutlineInputBorder(
@@ -235,7 +236,7 @@ Future<void> selectDateAndTime() async {
   controller: dateController,
   onTap: selectDateAndTime,
   decoration: InputDecoration(
-    hintText: 'Дата и время нарушения', 
+    hintText: 'Date_time_violation'.tr(), 
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(30.0),
     ),
@@ -266,7 +267,7 @@ Future<void> selectDateAndTime() async {
                 items: [
                   DropdownMenuItem<int?>(
                     value: null,
-                    child: Text('Выберите тип нарушения'),
+                    child: Text('select_violation_type'.tr()),
                   ),
                   ...violationsList.map((violation) {
                     return DropdownMenuItem<int>(
@@ -290,7 +291,7 @@ Future<void> selectDateAndTime() async {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Гос номер', 
+                  hintText: 'gos_nomer'.tr(), 
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
@@ -307,7 +308,7 @@ Future<void> selectDateAndTime() async {
                     _image = image;
                   });
                 },
-                child: Text('Из галереи'),
+                child: Text('from_gallery'.tr()),
                 
               ),
               ElevatedButton(
@@ -317,7 +318,7 @@ Future<void> selectDateAndTime() async {
                     _image = image;
                   });
                 },
-                child: Text('Открыть камеру'),
+                child: Text('open_camera'.tr()),
               ),
               ElevatedButton(
     onPressed: submitForm,
@@ -326,7 +327,7 @@ Future<void> selectDateAndTime() async {
       padding: EdgeInsets.all(16),
       alignment: Alignment.center,
       child: Text(
-        'Сохранить',
+        'save'.tr(),
         style: TextStyle(fontSize: 20, color: Colors.white),
       ),
     ),

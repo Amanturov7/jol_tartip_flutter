@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../search_results_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,7 +10,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String searchQuery = ''; // Состояние для хранения введенного запроса
+  String searchQuery = ''; 
 
   TextEditingController _searchController = TextEditingController();
 
@@ -19,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-        searchQuery = ''; // Присвоение пустой строки переменной searchQuery
+        searchQuery = ''; 
     fetchRecentApplications();
     fetchRecentReviews();
   }
@@ -58,7 +59,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Row(
           children: [
-            Text('Главная'),
+            Text('home'.tr()),
             Spacer(),
             IconButton(
               icon: Icon(Icons.notifications),
@@ -76,7 +77,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Проверка нарушений по гос номеру',
+                'check_gos_number'.tr(),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
 
               ),
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(30.0),
       ),
        focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+                    borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
                     borderRadius: BorderRadius.circular(30.0),
                   ),
       suffixIcon: InkWell(
@@ -126,7 +127,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Недавние нарушения',
+                'recent_applications'.tr(),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
@@ -155,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Нарушение № ${application['id']}',
+                        'violation_number'.tr() + '${application['id']}',
                         style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -167,7 +168,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Недавние отзывы',
+                'recent_reviews'.tr(),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
@@ -197,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'Отзыв № ${review['id']}',
+                        'review_number'.tr() + '${review['id']}',
                         style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ],

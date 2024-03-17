@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EventFormPage extends StatefulWidget {
@@ -181,7 +181,7 @@ Future<void> selectEndDateAndTime() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cобытие'),
+        title: Text('events'.tr()),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -191,7 +191,7 @@ Future<void> selectEndDateAndTime() async {
             TextFormField(
               controller: _titleController,
               decoration: InputDecoration(
-                hintText: 'Заголовок',
+                hintText: 'title'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
@@ -205,7 +205,7 @@ Future<void> selectEndDateAndTime() async {
             TextFormField(
               controller: _descriptionController,
               decoration: InputDecoration(
-                hintText: 'Описание',
+                hintText: 'description'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
@@ -221,7 +221,7 @@ Future<void> selectEndDateAndTime() async {
                   controller: dateStartController,
                   onTap: selectStartDateAndTime,
                   decoration: InputDecoration(
-                    hintText: 'Дата и время начала', 
+                    hintText: 'start_date_time'.tr(), 
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -242,7 +242,7 @@ Future<void> selectEndDateAndTime() async {
                   controller: dateEndController,
                   onTap: selectEndDateAndTime,
                   decoration: InputDecoration(
-                    hintText: 'Дата и время начала', 
+                    hintText: 'end_date_time'.tr(), 
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -261,7 +261,7 @@ Future<void> selectEndDateAndTime() async {
             TextFormField(
               controller: _addressController,
               decoration: InputDecoration(
-                hintText: 'Адрес',
+                hintText: 'address'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
@@ -286,7 +286,7 @@ Future<void> selectEndDateAndTime() async {
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Выберите тип события',
+                hintText: 'select_event_type'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
@@ -304,7 +304,7 @@ Future<void> selectEndDateAndTime() async {
                 padding: EdgeInsets.all(16),
                 alignment: Alignment.center,
                 child: Text(
-                  'Сохранить',
+                  'save'.tr(),
                   style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
