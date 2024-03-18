@@ -81,7 +81,27 @@ void initState() {
   }
 
   Future<void> submitForm() async {
-    // Проверка валидации формы перед отправкой
+    if (_image == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('error'.tr()),
+            content: Text('please_select_image'.tr()),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+    
     if (_formKey.currentState!.validate()) {
       var url = Uri.parse('${Constants.baseUrl}/rest/applications/create');
       var headers = {'Content-Type': 'application/json'};
@@ -104,21 +124,35 @@ void initState() {
         var response = await http.post(url, headers: headers, body: body);
 
         if (response.statusCode == 200) {
-          // Data submitted successfully
           print('Form submitted successfully');
           var responseData = jsonDecode(response.body);
           var applicationId = responseData['id'];
           if (_image != null) {
-            // Upload file if selected
             await uploadFile(applicationId);
           }
         } else {
-          // Failed to submit form
           print('Failed to submit form');
         }
       } catch (error) {
         print('Error creating application: $error');
       }
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('success'.tr()),
+            content: Text('reviw_saved'.tr()),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -193,7 +227,7 @@ void initState() {
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Form(
-            key: _formKey, // Добавляем ключ формы
+            key: _formKey, 
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

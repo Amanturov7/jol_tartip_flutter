@@ -14,8 +14,15 @@ class ReviewForm extends StatefulWidget {
 }
 
 class _ReviewFormPageState extends State<ReviewForm> {
+  final _formKey = GlobalKey<FormState>();
+
   String? reviewType;
-  List<String> reviewTypes = ['Дорожный знак', 'Освещение', 'Дорожные условия', 'Экологические факторы'];
+  List<String> reviewTypes = [
+    'Дорожный знак',
+    'Освещение',
+    'Дорожные условия',
+    'Экологические факторы'
+  ];
   String? selectedOption;
   List<String> options = [];
   double lat = 0;
@@ -24,29 +31,35 @@ class _ReviewFormPageState extends State<ReviewForm> {
   String description = '';
   int userId = 0;
   File? _image;
+  int? roadId;
+  int? lightId;
+  int? roadSignId;
+  int? ecologicFactorsId;
 
   @override
   void initState() {
+    fetchData();
     super.initState();
-    fetchUserData();
   }
 
-  void fetchUserData() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
-      if (token != null) {
-        final response = await http.get(Uri.parse('${Constants.baseUrl}/rest/user/user'), 
-          headers: {
-            'token': token,
-          }
-        );
+  Future<void> fetchData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token != null) {
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/rest/user/user?token=$token'),
+        headers: <String, String>{
+          'token': token,
+        },
+      );
+      if (response.statusCode == 200) {
+        final userData = jsonDecode(response.body);
         setState(() {
-          userId = jsonDecode(response.body)['id'];
+          userId = userData['id'] ?? 0;
         });
+      } else {
+        throw Exception('Failed to load user data');
       }
-    } catch (error) {
-      print('Error fetching user data: $error');
     }
   }
 
@@ -56,8 +69,24 @@ class _ReviewFormPageState extends State<ReviewForm> {
       selectedOption = null;
     });
 
+    switch (type) {
+      case 'Дорожный знак':
+        roadSignId = null; // Сбрасываем значение предыдущего выбора
+        break;
+      case 'Освещение':
+        lightId = null; // Сбрасываем значение предыдущего выбора
+        break;
+      case 'Дорожные условия':
+        roadId = null; // Сбрасываем значение предыдущего выбора
+        break;
+      case 'Экологические факторы':
+        ecologicFactorsId = null; // Сбрасываем значение предыдущего выбора
+        break;
+    }
+
     try {
-      final url = Uri.parse('${Constants.baseUrl}/rest/common-reference/by-type/${getTypeReferenceType(type)}');
+      final url = Uri.parse(
+          '${Constants.baseUrl}/rest/common-reference/by-type/${getTypeReferenceType(type)}');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -74,6 +103,40 @@ class _ReviewFormPageState extends State<ReviewForm> {
       }
     } catch (error) {
       print('Error fetching options: $error');
+    }
+
+    // Устанавливаем выбранное значение из списка опций в соответствующее поле
+    if (selectedOption != null) {
+      switch (type) {
+        case 'Дорожный знак':
+          roadSignId = options.indexOf(selectedOption!);
+          break;
+        case 'Освещение':
+          lightId = options.indexOf(selectedOption!);
+          break;
+        case 'Дорожные условия':
+          roadId = options.indexOf(selectedOption!);
+          break;
+        case 'Экологические факторы':
+          ecologicFactorsId = options.indexOf(selectedOption!);
+          break;
+      }
+    }
+  }
+
+  int? getTypeReferenceId(String? type) {
+    // Возвращаем соответствующий идентификатор для выбранного типа отзыва
+    switch (type) {
+      case 'Дорожный знак':
+        return roadSignId;
+      case 'Освещение':
+        return lightId;
+      case 'Дорожные условия':
+        return roadId;
+      case 'Экологические факторы':
+        return ecologicFactorsId;
+      default:
+        return null;
     }
   }
 
@@ -115,61 +178,28 @@ class _ReviewFormPageState extends State<ReviewForm> {
   }
 
   void handleSubmit() async {
-    // Check if an image is selected
-    if (_image == null) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('error'.tr()),
-            content: Text('please_select_image'.tr()),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
-
-
-  Future<void> uploadFile(int reviewsId) async {
-    var url = Uri.parse('${Constants.baseUrl}/rest/attachments/upload');
-    var request = http.MultipartRequest('POST', url);
-
-    request.fields['dto'] = jsonEncode({
-      'type': 'review',
-      'originName': _image!.path.split('/').last,
-      'description': 'File description', 
-      'userId': userId.toString(), 
-      'reviewsId': reviewsId.toString(), 
-    });
-
-    request.files.add(await http.MultipartFile.fromPath(
-      'file',
-      _image!.path,
-      contentType: MediaType('image', 'jpeg'),
-    ));
-
-    try {
-      var streamedResponse = await request.send();
-      var response = await http.Response.fromStream(streamedResponse);
-      if (response.statusCode == 200) {
-        print('Файл успешно загружен');
-      } else {
-        print('Не удалось загрузить файл. Статус код: ${response.statusCode}');
+    if (_formKey.currentState!.validate()) {
+      if (_image == null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('error'.tr()),
+              content: Text('please_select_image'.tr()),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        return;
       }
-    } catch (error) {
-      print('Ошибка загрузки файла: $error');
     }
-  }
-
-
 
     if (locationAddress.isEmpty) {
       showDialog(
@@ -192,7 +222,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
       return;
     }
 
-    // Handle form submission
     try {
       final response = await http.post(
         Uri.parse('${Constants.baseUrl}/rest/reviews/create'),
@@ -205,18 +234,19 @@ class _ReviewFormPageState extends State<ReviewForm> {
           'locationAddress': locationAddress,
           'description': description,
           'userId': userId,
-          'reviewType': reviewType,
+          "roadId": roadId,
+          "lightId": lightId,
+          "roadSignId": roadSignId,
+          "ecologicFactorsId": ecologicFactorsId
         }),
       );
 
       final responseData = jsonDecode(response.body);
 
-      // Upload image
       if (_image != null) {
         await uploadFile(responseData['id']);
       }
 
-      // Reset form fields
       setState(() {
         reviewType = null;
         selectedOption = null;
@@ -225,7 +255,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
         _image = null;
       });
 
-      // Show success dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -250,7 +279,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('error'.tr()),
-            content: Text('review_save_error'.tr() +' $error'),
+            content: Text('review_save_error'.tr() + ' $error'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
@@ -265,6 +294,37 @@ class _ReviewFormPageState extends State<ReviewForm> {
     }
   }
 
+  Future<void> uploadFile(int reviewsId) async {
+    var url = Uri.parse('${Constants.baseUrl}/rest/attachments/upload');
+    var request = http.MultipartRequest('POST', url);
+
+    request.fields['dto'] = jsonEncode({
+      'type': 'review',
+      'originName': _image!.path.split('/').last,
+      'description': 'File description',
+      'userId': userId.toString(),
+      'reviewsId': reviewsId.toString(),
+    });
+
+    request.files.add(await http.MultipartFile.fromPath(
+      'file',
+      _image!.path,
+      contentType: MediaType('image', 'jpeg'),
+    ));
+
+    try {
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode == 200) {
+        print('Файл успешно загружен');
+      } else {
+        print('Не удалось загрузить файл. Статус код: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Ошибка загрузки файла: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -272,154 +332,192 @@ class _ReviewFormPageState extends State<ReviewForm> {
         title: Text('review'.tr()),
       ),
       body: SingleChildScrollView(
-        child:Column(
-  crossAxisAlignment: CrossAxisAlignment.stretch,
-  children: [
-                  SizedBox(height: 16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: 16),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: DropdownButtonFormField<String>(
+                  value: reviewType,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Пожалуйста, выберите тип отзыва';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'select_review_type'.tr(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  onChanged: handleReviewTypeChange,
+                  items: reviewTypes.map((String type) {
+                    return DropdownMenuItem<String>(
+                      value: type,
+                      child: Text(type),
+                    );
+                  }).toList(),
+                ),
+              ),
+              SizedBox(height: 8),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: DropdownButtonFormField<String>(
+                  value: selectedOption,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Пожалуйста, выберите вид отзыва';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'select_review_type'.tr(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  onChanged: (String? value) {
+                    setState(() {
+                      selectedOption = value;
 
-    Container(
-      
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: DropdownButtonFormField<String>(
-        value: reviewType,
-        decoration: InputDecoration(
-          hintText: 'select_review_type'.tr(),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFF3BB5E9)),
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-        ),
-        onChanged: handleReviewTypeChange,
-        items: reviewTypes.map((String type) {
-          return DropdownMenuItem<String>(
-            value: type,
-            child: Text(type),
-          );
-        }).toList(),
-      ),
-    ),
-    SizedBox(height: 8),
-    Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: DropdownButtonFormField<String>(
-        value: selectedOption,
-        decoration: InputDecoration(
-          hintText: 'select_review_type'.tr(),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFF3BB5E9)),
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-        ),
-        onChanged: (String? value) {
-          setState(() {
-            selectedOption = value;
-          });
-        },
-        items: options.map((String option) {
-          return DropdownMenuItem<String>(
-            value: option,
-            child: Text(option),
-          );
-        }).toList(),
-      ),
-    ),
-    SizedBox(height: 8),
-    Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: TextFormField(
-        onChanged: (value) {
-          setState(() {
-            locationAddress = value;
-          });
-        },
-        decoration: InputDecoration(
-          hintText: 'address'.tr(),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFF3BB5E9)),
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-        ),
-      ),
-    ),
-    SizedBox(height: 8),
-    Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: TextFormField(
-        onChanged: (value) {
-          setState(() {
-            description = value;
-          });
-        },
-        decoration: InputDecoration(
-          hintText: 'description'.tr(),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFF3BB5E9)),
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-        ),
-      ),
-    ),
-    SizedBox(height: 8),
-    Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: ElevatedButton(
-        onPressed: handleSelectImage,
-        child: Text('select_image'.tr()),
-      ),
-    ),
-    SizedBox(height: 8),
-    Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: ElevatedButton(
-        onPressed: () async {
-          var image = await takePhoto();
-          setState(() {
-            _image = image;
-          });
-        },
-        child: Text('open_camera'.tr()),
-      ),
-    ),
-    SizedBox(height: 8),
-    Container(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: ElevatedButton(
-        onPressed: handleSubmit,
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(16),
-          alignment: Alignment.center,
-          child: Text(
-            'save'.tr(),
-            style: TextStyle(fontSize: 20, color: Colors.white),
+                      // В зависимости от выбранного типа отзыва, устанавливаем соответствующее значение
+                      switch (reviewType) {
+                        case 'Дорожный знак':
+                          roadSignId = options.indexOf(selectedOption!);
+                          break;
+                        case 'Освещение':
+                          lightId = options.indexOf(selectedOption!);
+                          break;
+                        case 'Дорожные условия':
+                          roadId = options.indexOf(selectedOption!);
+                          break;
+                        case 'Экологические факторы':
+                          ecologicFactorsId = options.indexOf(selectedOption!);
+                          break;
+                      }
+                    });
+                  },
+                  items: options.map((String option) {
+                    return DropdownMenuItem<String>(
+                      value: option,
+                      child: Text(option),
+                    );
+                  }).toList(),
+                ),
+              ),
+              SizedBox(height: 8),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: TextFormField(
+                  onChanged: (value) {
+                    setState(() {
+                      locationAddress = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Пожалуйста, введите адрес';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'address'.tr(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 8),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: TextFormField(
+                  onChanged: (value) {
+                    setState(() {
+                      description = value;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Пожалуйста, введите описание';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'description'.tr(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 8),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: ElevatedButton(
+                  onPressed: handleSelectImage,
+                  child: Text('select_image'.tr()),
+                ),
+              ),
+              SizedBox(height: 8),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    var image = await takePhoto();
+                    setState(() {
+                      _image = image;
+                    });
+                  },
+                  child: Text('open_camera'.tr()),
+                ),
+              ),
+              SizedBox(height: 8),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: ElevatedButton(
+                  onPressed: handleSubmit,
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(16),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'save'.tr(),
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF3BB5E9),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    minimumSize: Size(double.infinity, 70),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF3BB5E9),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          minimumSize: Size(double.infinity, 70),
-        ),
-      ),
-    ),
-  ],
-)
-
-
-
       ),
     );
   }
