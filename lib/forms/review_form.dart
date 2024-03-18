@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:jol_tartip_flutter/constants.dart';
 
 class ReviewForm extends StatefulWidget {
   @override
@@ -35,7 +36,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
       if (token != null) {
-        final response = await http.get(Uri.parse('http://localhost:8080/rest/user/user'), 
+        final response = await http.get(Uri.parse('${Constants.baseUrl}/rest/user/user'), 
           headers: {
             'token': token,
           }
@@ -56,7 +57,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
     });
 
     try {
-      final url = Uri.parse('http://172.26.192.1:8080/rest/common-reference/by-type/${getTypeReferenceType(type)}');
+      final url = Uri.parse('${Constants.baseUrl}/rest/common-reference/by-type/${getTypeReferenceType(type)}');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -138,7 +139,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
 
 
   Future<void> uploadFile(int reviewsId) async {
-    var url = Uri.parse('http://172.26.192.1:8080/rest/attachments/upload');
+    var url = Uri.parse('${Constants.baseUrl}/rest/attachments/upload');
     var request = http.MultipartRequest('POST', url);
 
     request.fields['dto'] = jsonEncode({
@@ -194,7 +195,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
     // Handle form submission
     try {
       final response = await http.post(
-        Uri.parse('http://172.26.192.1:8080/rest/reviews/create'),
+        Uri.parse('${Constants.baseUrl}/rest/reviews/create'),
         headers: {
           'Content-Type': 'application/json',
         },

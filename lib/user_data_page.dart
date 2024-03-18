@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:jol_tartip_flutter/constants.dart';
 
 class UserDataPage extends StatefulWidget {
   @override
@@ -25,7 +26,7 @@ class _UserDataPageState extends State<UserDataPage> {
     final token = prefs.getString('token');
     if (token != null) {
       final response = await http.get(
-        Uri.parse('http://localhost:8080/rest/user/user?token=$token'),
+        Uri.parse('${Constants.baseUrl}/rest/user/user?token=$token'),
         headers: <String, String>{
           'token': token,
         },

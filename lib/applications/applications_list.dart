@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:jol_tartip_flutter/applications/detailed_view_application.dart';
+import 'package:jol_tartip_flutter/constants.dart';
 
 class ApplicationsList extends StatefulWidget {
   @override
@@ -27,7 +28,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   Future<void> fetchData() async {
     try {
-      String url = 'http://192.168.0.112:8080/rest/applications/all';
+      String url = '${Constants.baseUrl}/rest/applications/all';
       url += '?page=$pageNumber';
 
       if (selectedFilter != null) {
@@ -63,7 +64,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
   Future<void> fetchFilterOptions() async {
     try {
       final response = await http
-          .get(Uri.parse('http://192.168.0.112:8080/rest/violations/all'));
+          .get(Uri.parse('${Constants.baseUrl}/rest/violations/all'));
       if (response.statusCode == 200) {
         setState(() {
           filterOptions = json.decode(utf8.decode(response.bodyBytes));
@@ -112,7 +113,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   void applyFilters() {
     fetchData();
-    Navigator.pop(context); // Close the bottom sheet after applying filters
+    Navigator.pop(context); 
   }
 
   @override
@@ -304,7 +305,6 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   final application = applications[index];
                   return GestureDetector(
                     onTap: () {
-                      // Переход на страницу с подробными данными при нажатии на блок с нарушением
                       Navigator.push(
   context,
   MaterialPageRoute(
@@ -326,7 +326,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Image.network(
-                                'http://192.168.0.112:8080/rest/attachments/download/applications/${application['id']}',
+                                '${Constants.baseUrl}:8080/rest/attachments/download/applications/${application['id']}',
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                               ),

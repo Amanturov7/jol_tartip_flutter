@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:jol_tartip_flutter/constants.dart';
 
 class DetailedViewApplicationPage extends StatefulWidget {
   final String id;
@@ -31,13 +32,12 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse("http://192.168.0.112:8080/rest/applications/${widget.id}"));
+      final response = await http.get(Uri.parse("${Constants.baseUrl}/rest/applications/${widget.id}"));
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
         setState(() {
           applicationData = jsonData;
-          // Заполнение контроллеров данными из запроса
           titleController = TextEditingController(text: applicationData!['title']);
           dateController = TextEditingController(text: applicationData!['dateOfViolation']);
           numberAutoController = TextEditingController(text: applicationData!['numberAuto']);
@@ -53,7 +53,7 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
 
   Future<void> fetchViolations() async {
     try {
-      final response = await http.get(Uri.parse('http://172.26.192.1:8080/rest/violations/all'));
+      final response = await http.get(Uri.parse('${Constants.baseUrl}:8080/rest/violations/all'));
       if (response.statusCode == 200) {
         final data = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         setState(() {
@@ -109,7 +109,7 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                               child: Hero(
                                 tag: 'image${applicationData!['id']}',
                                 child: Image.network(
-                                  'http://192.168.0.112:8080/rest/attachments/download/applications/${widget.id}',
+                                  '${Constants.baseUrl}/rest/attachments/download/applications/${widget.id}',
                                   fit: BoxFit.contain,
                                 ),
                               ),
@@ -124,7 +124,7 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         image: DecorationImage(
-                          image: NetworkImage('http://192.168.0.112:8080/rest/attachments/download/applications/${widget.id}'),
+                          image: NetworkImage('${Constants.baseUrl}/rest/attachments/download/applications/${widget.id}'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -136,7 +136,7 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                       TextFormField(
                         controller: TextEditingController(text: applicationData!['title']),
                         decoration: InputDecoration(
-                          labelText: 'Тип нарушения',
+                          labelText: 'violation_type'.tr(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),
@@ -151,7 +151,7 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                       TextFormField(
                         controller: dateController,
                         decoration: InputDecoration(
-                          labelText: 'Дата Нарушения',
+                          labelText: 'Date_time_violation'.tr(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),
@@ -166,7 +166,7 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                       TextFormField(
                         controller: numberAutoController,
                         decoration: InputDecoration(
-                          labelText: 'Гос номер',
+                          labelText: 'gos_nomer'.tr(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),
@@ -182,7 +182,7 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                       TextFormField(
                         controller: descriptionController,
                         decoration: InputDecoration(
-                          labelText: 'Описание',
+                          labelText: 'description'.tr(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),

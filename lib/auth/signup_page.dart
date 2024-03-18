@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'terms_page.dart'; 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:jol_tartip_flutter/main.dart';
+import 'package:jol_tartip_flutter/constants.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -25,7 +26,7 @@ class _SignupPageState extends State<SignupPage> {
     if (_formKey.currentState!.validate() && _agreedToTerms) {
       // Все поля прошли валидацию, и условия пользования приняты
       // Можно выполнять регистрацию
-      final String apiUrl = 'http://localhost:8080/auth/signup';
+      final String apiUrl = '${Constants.baseUrl}/auth/signup';
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{

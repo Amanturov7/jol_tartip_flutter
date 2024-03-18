@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:jol_tartip_flutter/constants.dart';
 
 class SearchResultsPage extends StatefulWidget {
   final String searchQuery;
@@ -25,7 +26,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   Future<void> fetchSearchResults() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8080/rest/applications/by-gos-number?gosNumber=${widget.searchQuery}'),
+        Uri.parse('${Constants.baseUrl}/rest/applications/by-gos-number?gosNumber=${widget.searchQuery}'),
         headers: {
           'Accept-Charset': 'utf-8',
         },
@@ -80,7 +81,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
-                                      'http://localhost:8080/rest/attachments/download/applications/${application['id']}',
+                                      '${Constants.baseUrl}/rest/attachments/download/applications/${application['id']}',
                                       fit: BoxFit.cover,
                                       width: double.infinity,
                                     ),

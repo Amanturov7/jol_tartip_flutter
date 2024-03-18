@@ -130,6 +130,8 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
+                                      SizedBox(height: 20),
+
                     Container(
                        height: 70,
                       width: double.infinity,

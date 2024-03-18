@@ -4,6 +4,7 @@ import 'package:jol_tartip_flutter/main.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:jol_tartip_flutter/constants.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      final String apiUrl = 'http://172.26.192.1:8080/auth/authenticate';
+      final String apiUrl = '${Constants.baseUrl}/auth/authenticate';
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{

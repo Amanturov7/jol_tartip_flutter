@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:jol_tartip_flutter/constants.dart';
 
 class Event {
   final String title;
@@ -26,7 +27,7 @@ class _EventsListState extends State<EventsList> {
 
   void fetchEvents() async {
     try {
-      final response = await http.get(Uri.parse('http://172.26.192.1:8080/rest/events/all'));
+      final response = await http.get(Uri.parse('${Constants.baseUrl}/rest/events/all'));
       if (response.statusCode == 200) {
        final fetchedEvents = json.decode(utf8.decode(response.bodyBytes))
             .map((item) => Event(

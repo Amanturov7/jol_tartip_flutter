@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jol_tartip_flutter/constants.dart';
 
 class EventFormPage extends StatefulWidget {
   @override
@@ -37,7 +38,7 @@ class _EventFormPageState extends State<EventFormPage> {
     final token = prefs.getString('token');
     if (token != null) {
       final response = await http.get(
-        Uri.parse('http://172.26.192.1:8080/rest/user/user?token=$token'),
+        Uri.parse('${Constants.baseUrl}/rest/user/user?token=$token'),
         headers: <String, String>{
           'token': token,
         },
@@ -57,7 +58,7 @@ final userData = json.decode(utf8.decode(response.bodyBytes));
   void fetchEventTypes() async {
     try {
       final response = await http.get(
-          Uri.parse('http://172.26.192.1:8080/rest/common-reference/by-type/006'));
+          Uri.parse('${Constants.baseUrl}/rest/common-reference/by-type/006'));
       if (response.statusCode == 200) {
         // Если запрос успешен, декодируем полученные данные из JSON
         final data = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
@@ -90,7 +91,7 @@ final userData = json.decode(utf8.decode(response.bodyBytes));
     final int endDateInMillis = _endDateTime!.millisecondsSinceEpoch;
 
     final response = await http.post(
-      Uri.parse('http://172.26.192.1:8080/rest/events/create'),
+      Uri.parse('${Constants.baseUrl}/rest/events/create'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

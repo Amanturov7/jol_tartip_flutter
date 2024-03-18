@@ -58,5 +58,7 @@
   "seacrh_result": "searching results",
   "no_violations": "No violations!",
   "select_language": "Select language",
-  "settings": "Settings"
+  "settings": "Settings",
+  "violation_type": "Violation type"
+
 }

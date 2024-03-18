@@ -58,5 +58,6 @@
   "to_register": "Зарегистрироваться",
   "violation": "Нарушение",
   "violation_number": "Нарушение №",
-  "violations": "Нарушения"
+  "violations": "Нарушения",
+  "violation_type": "Тип нарушения"
 }
