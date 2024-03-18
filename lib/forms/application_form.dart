@@ -18,7 +18,7 @@ class _ViolationFormPageState extends State<ViolationFormPage> {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   final _formKey = GlobalKey<FormState>(); 
-
+  late TextEditingController _numberAutoController;
   String description = '';
   String place = '';
   double lat = 0.0;
@@ -40,6 +40,7 @@ void initState() {
   fetchData();
   super.initState();
   selectedViolationIndex = null;
+      _numberAutoController = TextEditingController(text: numberAuto);
   fetchViolations();
 }
 
@@ -344,30 +345,30 @@ void initState() {
                   ],
                 ),
                 SizedBox(height: 8),
-                TextFormField(
-                  controller: TextEditingController(text: numberAuto),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Пожалуйста, введите номер автомобиля';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      numberAuto = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'gos_nomer'.tr(),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF3BB5E9)),
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
-                ),
+        TextFormField(
+      controller: _numberAutoController,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Пожалуйста, введите номер автомобиля';
+        }
+        return null;
+      },
+      onChanged: (value) {
+        setState(() {
+          numberAuto = value;
+        });
+      },
+      decoration: InputDecoration(
+        hintText: 'gos_nomer'.tr(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+      ),
+    ),
                 SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: () async {
