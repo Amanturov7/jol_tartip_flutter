@@ -28,13 +28,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
+
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       title: 'JolTartip',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+     theme: ThemeData(
+  primarySwatch: Colors.blue,
+  textSelectionTheme: TextSelectionThemeData(
+    cursorColor:  Color(0xFF3BB5E9), 
+    selectionColor:  Color(0xFF3BB5E9), 
+    selectionHandleColor:  Color(0xFF3BB5E9), 
+  ),
+),
+
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(),
@@ -118,3 +126,4 @@ final profileLabel = 'profile'.tr();
     });
   }
 }
+

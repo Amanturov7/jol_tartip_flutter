@@ -24,8 +24,7 @@ class _SignupPageState extends State<SignupPage> {
 
   Future<void> _signup() async {
     if (_formKey.currentState!.validate() && _agreedToTerms) {
-      // Все поля прошли валидацию, и условия пользования приняты
-      // Можно выполнять регистрацию
+
       final String apiUrl = '${Constants.baseUrl}/auth/signup';
       final response = await http.post(
         Uri.parse(apiUrl),
@@ -43,16 +42,12 @@ class _SignupPageState extends State<SignupPage> {
       );
 
       if (response.statusCode == 201) {
-        // Регистрация выполнена успешно
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => MyApp()),
           (route) => false,
         );
-        // Пользователь создан
       } else {
-        // Регистрация не выполнена
-        // Обрабатываем ошибку
         print('Failed to signup: ${response.statusCode}');
       }
     }
@@ -92,7 +87,6 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 SizedBox(height: 16),
-                // Остальные поля с валидацией аналогично
                 TextFormField(
                   controller: _passwordController,
                   validator: (value) {
@@ -203,13 +197,12 @@ class _SignupPageState extends State<SignupPage> {
                           _agreedToTerms = value!;
                         });
                       },
-                        activeColor: Color(0xFF3BB5E9) , // Здесь указывается цвет чекбокса
+                        activeColor: Color(0xFF3BB5E9) , 
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     GestureDetector(
                       onTap: () {
-                        // Переход на страницу с текстом об условиях пользования с анимацией
-                      
+                    
                         Navigator.push(
                           context,
                           MaterialPageRoute(

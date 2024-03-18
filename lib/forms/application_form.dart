@@ -271,14 +271,18 @@ void initState() {
                   },
                   decoration: InputDecoration(
                     hintText: 'address'.tr(),
+                    
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Color(0xFF3BB5E9)),
                       borderRadius: BorderRadius.circular(30.0),
+                      
                     ),
+                    
                   ),
+
                 ),
                 SizedBox(height: 8),
                 TextFormField(

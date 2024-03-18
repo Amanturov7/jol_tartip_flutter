@@ -53,7 +53,7 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
 
   Future<void> fetchViolations() async {
     try {
-      final response = await http.get(Uri.parse('${Constants.baseUrl}:8080/rest/violations/all'));
+      final response = await http.get(Uri.parse('${Constants.baseUrl}/rest/violations/all'));
       if (response.statusCode == 200) {
         final data = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         setState(() {

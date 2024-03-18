@@ -191,7 +191,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                         borderRadius: BorderRadius.circular(30.0),
                                       ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(color: Color(0xFF3BB5E9)), // Установите желаемый цвет для границы при активном состоянии
+                                          borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
                                           borderRadius: BorderRadius.circular(30.0),
                                         ),
                                     ),
