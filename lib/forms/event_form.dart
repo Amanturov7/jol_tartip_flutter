@@ -17,7 +17,7 @@ class _EventFormPageState extends State<EventFormPage> {
   TextEditingController dateStartController = TextEditingController();
   TextEditingController timeStartController = TextEditingController();
 
- TextEditingController dateEndController = TextEditingController();
+  TextEditingController dateEndController = TextEditingController();
   TextEditingController timeEndController = TextEditingController();
 
   DateTime? _startDateTime;
@@ -25,12 +25,13 @@ class _EventFormPageState extends State<EventFormPage> {
   TextEditingController _addressController = TextEditingController();
   int? _selectedEventType;
   int userId = 0;
-  List<dynamic> _eventTypes = []; // Список типов событий
+  List<dynamic> _eventTypes = [];
 
   @override
   void initState() {
+    fetchData();
     super.initState();
-    fetchEventTypes(); // Вызываем функцию загрузки типов событий при инициализации страницы
+    fetchEventTypes();
   }
 
   Future<void> fetchData() async {
@@ -54,16 +55,13 @@ final userData = json.decode(utf8.decode(response.bodyBytes));
     }
   }
 
-  // Функция для загрузки типов событий с сервера
   void fetchEventTypes() async {
     try {
       final response = await http.get(
           Uri.parse('${Constants.baseUrl}/rest/common-reference/by-type/006'));
       if (response.statusCode == 200) {
-        // Если запрос успешен, декодируем полученные данные из JSON
         final data = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
 
-        // Создаем список типов событий, извлекая title и id
         List<Map<String, dynamic>> eventTypes = [];
         for (var item in data) {
           eventTypes.add({
@@ -72,7 +70,6 @@ final userData = json.decode(utf8.decode(response.bodyBytes));
           });
         }
 
-        // Обновляем список типов событий в состоянии
         setState(() {
           _eventTypes = eventTypes;
         });
@@ -84,11 +81,24 @@ final userData = json.decode(utf8.decode(response.bodyBytes));
     }
   }
 
-  // Функция для отправки данных формы
  void submit() async {
   try {
-    final int startDateInMillis = _startDateTime!.millisecondsSinceEpoch;
-    final int endDateInMillis = _endDateTime!.millisecondsSinceEpoch;
+    int? startDateInMillis;
+    int? endDateInMillis;
+
+    if (_startDateTime != null) {
+      startDateInMillis = _startDateTime!.millisecondsSinceEpoch;
+    } else {
+      print('Error: _startDateTime is null');
+      return; 
+    }
+
+    if (_endDateTime != null) {
+      endDateInMillis = _endDateTime!.millisecondsSinceEpoch;
+    } else {
+      print('Error: _endDateTime is null');
+      return;
+    }
 
     final response = await http.post(
       Uri.parse('${Constants.baseUrl}/rest/events/create'),
@@ -112,11 +122,11 @@ final userData = json.decode(utf8.decode(response.bodyBytes));
     _descriptionController.clear();
     _addressController.clear();
 
-    // Дополнительные действия после успешной отправки формы
   } catch (error) {
     print('Error creating event: $error');
   }
 }
+
 
 Future<void> selectStartDateAndTime() async {
   final DateTime? pickedDateAndTime = await showDatePicker(
