@@ -17,7 +17,7 @@ class ViolationFormPage extends StatefulWidget {
 class _ViolationFormPageState extends State<ViolationFormPage> {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
-  final _formKey = GlobalKey<FormState>(); // Ключ формы
+  final _formKey = GlobalKey<FormState>(); 
 
   String description = '';
   String place = '';
@@ -35,24 +35,27 @@ class _ViolationFormPageState extends State<ViolationFormPage> {
   List<Map<String, dynamic>> violationsList = [];
   int? selectedViolationIndex;
 
-  @override
-  void initState() {
-    super.initState();
-    selectedViolationIndex = null;
-    fetchData();
-    fetchViolations();
-  }
+@override
+void initState() {
+  fetchData();
+  super.initState();
+  selectedViolationIndex = null;
+  fetchViolations();
+}
 
-  Future<void> fetchData() async {
+
+   Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     if (token != null) {
       final response = await http.get(
-        Uri.parse('http://172.26.192.1:8080/rest/user/user?token=$token'),
-        headers: <String, String>{'token': token},
+        Uri.parse('${Constants.baseUrl}/rest/user/user?token=$token'),
+        headers: <String, String>{
+          'token': token,
+        },
       );
       if (response.statusCode == 200) {
-        final userData = json.decode(utf8.decode(response.bodyBytes));
+        final userData = jsonDecode(response.body);
         setState(() {
           userId = userData['id'] ?? 0;
         });

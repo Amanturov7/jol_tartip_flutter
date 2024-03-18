@@ -326,7 +326,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Image.network(
-                                '${Constants.baseUrl}:8080/rest/attachments/download/applications/${application['id']}',
+                                '${Constants.baseUrl}/rest/attachments/download/applications/${application['id']}',
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                               ),
