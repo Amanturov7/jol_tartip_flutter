@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+
 class MapsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -13,16 +14,18 @@ class MapsPage extends StatelessWidget {
       ),
       body: FlutterMap(
         options: MapOptions(
-          center: LatLng(51.509364, -0.128928),
+          center: LatLng(42.8746, 74.5698),
           zoom: 9.2,
+          interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag | InteractiveFlag.rotate, // Используем параметр interactiveFlags для управления поведением карты
         ),
         children: [
           TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.example.app',
+            urlTemplate: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+            subdomains: ['a', 'b', 'c'],
           ),
         ],
       ),
     );
   }
 }
+
