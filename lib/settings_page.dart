@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'map_marker.dart'; // Импортируем страницу с картой
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -62,6 +63,16 @@ class _SettingsPageState extends State<SettingsPage> {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
+              ),
+              SizedBox(height: 20), // Добавляем отступ перед кнопкой
+              ElevatedButton( // Создаем кнопку
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MapMarkerPage()), // Переходим на страницу с картой
+                  );
+                },
+                child: Text('Open Map'), // Задаем текст кнопки
               ),
             ],
           ),
