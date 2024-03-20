@@ -3,18 +3,31 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapMarkerPage extends StatefulWidget {
+  final Function(double, double)? onSave; // Изменим тип функции
+
+  MapMarkerPage({Key? key, this.onSave}) : super(key: key);
+
   @override
   _MapMarkerPageState createState() => _MapMarkerPageState();
 }
 
 class _MapMarkerPageState extends State<MapMarkerPage> {
-  LatLng? _markerLatLng;
+  double? _latitude; // Изменим тип переменных
+  double? _longitude;
 
   void _handleTap(TapPosition pos, LatLng latLng) {
     setState(() {
-      _markerLatLng = latLng;
+      _latitude = latLng.latitude;
+      _longitude = latLng.longitude;
     });
   }
+
+ void _saveLocation() {
+  if (_latitude != null && _longitude != null && widget.onSave != null) {
+    widget.onSave!(_latitude!, _longitude!); // Вызываем функцию обратного вызова
+  }
+  Navigator.pop(context); // Закрываем страницу после сохранения
+}
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +48,13 @@ class _MapMarkerPageState extends State<MapMarkerPage> {
                 urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 subdomains: ['a', 'b', 'c'],
               ),
-              if (_markerLatLng != null)
+              if (_latitude != null && _longitude != null) // Изменим условие наличия маркера
                 MarkerLayer(
                   markers: [
                     Marker(
                       width: 80.0,
                       height: 80.0,
-                      point: _markerLatLng!,
+                      point: LatLng(_latitude!, _longitude!), // Используем текущие значения широты и долготы
                       child: Container(
                         child: Icon(
                           Icons.location_pin,
@@ -54,7 +67,7 @@ class _MapMarkerPageState extends State<MapMarkerPage> {
                 ),
             ],
           ),
-          if (_markerLatLng != null)
+          if (_latitude != null && _longitude != null) // Изменим условие отображения текста и кнопки
             Positioned(
               bottom: 20,
               left: 20,
@@ -66,12 +79,17 @@ class _MapMarkerPageState extends State<MapMarkerPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Latitude: ${_markerLatLng!.latitude}',
+                        'Latitude: $_latitude',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        'Longitude: ${_markerLatLng!.longitude}',
+                        'Longitude: $_longitude',
                         style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: _saveLocation,
+                        child: Text('Сохранить'),
                       ),
                     ],
                   ),

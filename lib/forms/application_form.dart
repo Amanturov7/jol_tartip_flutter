@@ -6,8 +6,10 @@ import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:jol_tartip_flutter/constants.dart';
+import 'package:jol_tartip_flutter/map_marker.dart';
 import 'image_selector_box.dart'; // Импортируем класс ImageSelectorBox
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:latlong2/latlong.dart';
 
 class ViolationFormPage extends StatefulWidget {
   @override
@@ -43,6 +45,33 @@ class _ViolationFormPageState extends State<ViolationFormPage> {
     _numberAutoController = TextEditingController(text: numberAuto);
     fetchViolations();
   }
+  
+
+void _handleLocationSelection(double latitude, double longitude) {
+  setState(() {
+    lat = latitude;
+    lon = longitude;
+    print(lat);
+    print(lon);
+  });
+}
+
+
+  void _selectLocation() async {
+  final location = await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => MapMarkerPage()),
+  );
+
+  if (location != null) {
+    setState(() {
+      lat = location[0]; // Извлекаем первое значение - широту
+      lon = location[1]; // Извлекаем второе значение - долготу
+      print(lat);
+      print(lon);
+    });
+  }
+}
 
   Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -282,6 +311,34 @@ class _ViolationFormPageState extends State<ViolationFormPage> {
                     ),
                   ),
                 ),
+                ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MapMarkerPage(
+          onSave: _handleLocationSelection, // Передаем функцию обратного вызова
+        ),
+      ),
+    );
+  },
+  child: Container(
+    width: double.infinity,
+    padding: EdgeInsets.all(16),
+    alignment: Alignment.center,
+    child: Text(
+      'Select Location',
+      style: TextStyle(fontSize: 20, color: Colors.white),
+    ),
+  ),
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Color(0xFF3BB5E9),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(30),
+    ),
+    minimumSize: Size(double.infinity, 70),
+  ),
+),
                 SizedBox(height: 8),
                 TextFormField(
                   readOnly: true,
