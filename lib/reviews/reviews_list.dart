@@ -86,6 +86,10 @@ class _ReviewsListState extends State<ReviewsList> {
     }
   }
 
+  Future<void> onRefresh() async {
+    fetchData();
+  }
+
   void applyFilters() {
     fetchData();
     Navigator.pop(context);
@@ -130,136 +134,134 @@ class _ReviewsListState extends State<ReviewsList> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                SizedBox(height: 8),
-                                DropdownButtonFormField<int?>(
-                                  value: selectedRoadSignId,
-                                  decoration: InputDecoration(
-                                    hintText: 'Дорожные знаки:',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
+                                  SizedBox(height: 8),
+                                  DropdownButtonFormField<int?>(
+                                    value: selectedRoadSignId,
+                                    decoration: InputDecoration(
+                                      hintText: 'Дорожные знаки:',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                                     ),
-                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),                                
-                                  ),
-                                  items: [
-                                    
-                                    DropdownMenuItem<int?>(
-                                      
-                                      value: null,
-                                      child: Text('Выберите дорожной знак'),
-                                    ),
-                                    ...roadSigns.map<DropdownMenuItem<int?>>((sign) {
-                                      return DropdownMenuItem<int?>(
-                                        value: sign['id'].toInt(),
-                                        child: Text(sign['title']),
-                                      );
-                                    }).toList(),
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedRoadSignId = value;
+                                    items: [
+                                      DropdownMenuItem<int?>(
+                                        value: null,
+                                        child: Text('Выберите дорожной знак'),
+                                      ),
+                                      ...roadSigns.map<DropdownMenuItem<int?>>((sign) {
+                                        return DropdownMenuItem<int?>(
+                                          value: sign['id'].toInt(),
+                                          child: Text(sign['title']),
+                                        );
+                                      }).toList(),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedRoadSignId = value;
                                         selectedLightId = null;
-      selectedRoadId = null;
-      selectedEcologicFactorId = null;
-                                    });
-                                  },
-                                ),
-                                SizedBox(height: 8),
-                                DropdownButtonFormField<int?>(
-                                  value: selectedLightId,
-                                  decoration: InputDecoration(
-                                    hintText: 'Освещение:',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                    ),
-                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),                                
+                                        selectedRoadId = null;
+                                        selectedEcologicFactorId = null;
+                                      });
+                                    },
                                   ),
-                                  items: [
-                                    DropdownMenuItem<int?>(
-                                      value: null,
-                                      child: Text('Выберите тип освещения'),
+                                  SizedBox(height: 8),
+                                  DropdownButtonFormField<int?>(
+                                    value: selectedLightId,
+                                    decoration: InputDecoration(
+                                      hintText: 'Освещение:',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                                     ),
-                                    ...lights.map<DropdownMenuItem<int?>>((light) {
-                                      return DropdownMenuItem<int?>(
-                                        value: light['id'].toInt(),
-                                        child: Text(light['title']),
-                                      );
-                                    }).toList(),
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedLightId = value;
-                                      selectedRoadSignId = null;
-                                      selectedRoadId = null;
-                                      selectedEcologicFactorId = null;
-                                    });
-                                  },
-                                ),
-                                SizedBox(height: 8),
-                                DropdownButtonFormField<int?>(
-                                  value: selectedRoadId,
-                                  decoration: InputDecoration(
-                                    hintText: 'Дороги:',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
+                                    items: [
+                                      DropdownMenuItem<int?>(
+                                        value: null,
+                                        child: Text('Выберите тип освещения'),
+                                      ),
+                                      ...lights.map<DropdownMenuItem<int?>>((light) {
+                                        return DropdownMenuItem<int?>(
+                                          value: light['id'].toInt(),
+                                          child: Text(light['title']),
+                                        );
+                                      }).toList(),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedLightId = value;
+                                        selectedRoadSignId = null;
+                                        selectedRoadId = null;
+                                        selectedEcologicFactorId = null;
+                                      });
+                                    },
+                                  ),
+                                  SizedBox(height: 8),
+                                  DropdownButtonFormField<int?>(
+                                    value: selectedRoadId,
+                                    decoration: InputDecoration(
+                                      hintText: 'Дороги:',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                                     ),
-                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),                                
+                                    items: [
+                                      DropdownMenuItem<int?>(
+                                        value: null,
+                                        child: Text('Выберите тип дороги'),
+                                      ),
+                                      ...roads.map<DropdownMenuItem<int?>>((road) {
+                                        return DropdownMenuItem<int?>(
+                                          value: road['id'].toInt(),
+                                          child: Text(road['title']),
+                                        );
+                                      }).toList(),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedRoadId = value;
+                                        selectedRoadSignId = null;
+                                        selectedLightId = null;
+                                        selectedEcologicFactorId = null;
+                                      });
+                                    },
                                   ),
-                                  items: [
-                                    DropdownMenuItem<int?>(
-                                      value: null,
-                                      child: Text('Выберите тип дороги'),
+                                  SizedBox(height: 8),
+                                  DropdownButtonFormField<int?>(
+                                    value: selectedEcologicFactorId,
+                                    decoration: InputDecoration(
+                                      hintText: 'Экологические факторы:',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
                                     ),
-                                    ...roads.map<DropdownMenuItem<int?>>((road) {
-                                      return DropdownMenuItem<int?>(
-                                        value: road['id'].toInt(),
-                                        child: Text(road['title']),
-                                      );
-                                    }).toList(),
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedRoadId = value;
-                                      selectedRoadSignId = null;
-                                      selectedLightId = null;
-                                      selectedEcologicFactorId = null;
-                                    });
-                                  },
-                                ),
-                                SizedBox(height: 8),
-                               DropdownButtonFormField<int?>(
-                                value: selectedEcologicFactorId,
-                                decoration: InputDecoration(
-                                  hintText: 'Экологические факторы:',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
+                                    items: [
+                                      DropdownMenuItem<int?>(
+                                        value: null,
+                                        child: Text('Выберите экологический фактор'),
+                                      ),
+                                      ...ecologicFactors.map<DropdownMenuItem<int?>>((factor) {
+                                        return DropdownMenuItem<int?>(
+                                          value: factor['id'].toInt(),
+                                          child: Text(factor['title']),
+                                        );
+                                      }).toList(),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedEcologicFactorId = value;
+                                        selectedRoadId = null;
+                                        selectedRoadSignId = null;
+                                        selectedLightId = null;
+                                      });
+                                    },
                                   ),
-                                      contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),                                
-                                ),
-                                items: [
-                                  DropdownMenuItem<int?>(
-                                    value: null,
-                                    child: Text('Выберите экологический фактор'),
-                                  ),
-                                  ...ecologicFactors.map<DropdownMenuItem<int?>>((factor) {
-                                    return DropdownMenuItem<int?>(
-                                      value: factor['id'].toInt(),
-                                      child: Text(factor['title']),
-                                    );
-                                  }).toList(),
-                                ],
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedEcologicFactorId = value;
-                                    selectedRoadId = null;
-                                    selectedRoadSignId = null;
-                                    selectedLightId = null;
-                                  });
-                                },
-                              ),
                                   SizedBox(height: 8),
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       ElevatedButton(
                                         onPressed: applyFilters,
@@ -303,9 +305,9 @@ class _ReviewsListState extends State<ReviewsList> {
                   Icons.circle,
                   size: 12,
                   color: selectedRoadSignId != null ||
-                          selectedLightId != null ||
-                          selectedRoadId != null ||
-                          selectedEcologicFactorId != null
+                      selectedLightId != null ||
+                      selectedRoadId != null ||
+                      selectedEcologicFactorId != null
                       ? Colors.blue
                       : Colors.transparent,
                 ),
@@ -319,42 +321,47 @@ class _ReviewsListState extends State<ReviewsList> {
           ),
         ],
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 5.0,
-          mainAxisSpacing: 5.0,
-        ),
-        itemCount: reviews.length,
-        itemBuilder: (BuildContext context, int index) {
-          final review = reviews[index];
-          return Container(
-            margin: EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      '${Constants.baseUrl}/rest/attachments/download/reviews/${review['id']}',
-                      fit: BoxFit.cover,
-                      width: double.infinity,
+
+      body: RefreshIndicator(
+        onRefresh: onRefresh,
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 5.0,
+            mainAxisSpacing: 5.0,
+          ),
+          itemCount: reviews.length,
+          itemBuilder: (BuildContext context, int index) {
+            final review = reviews[index];
+            return Container(
+              margin: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        '${Constants.baseUrl}/rest/attachments/download/reviews/${review['id']}',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'review_number'.tr() + '${review['id']}',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          );
-        },
+                  SizedBox(height: 8),
+                  Text(
+                    'review_number'.tr() + '${review['id']}',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 }
+

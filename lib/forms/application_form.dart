@@ -81,81 +81,85 @@ void initState() {
     }
   }
 
-  Future<void> submitForm() async {
-    if (_image == null) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('error'.tr()),
-            content: Text('please_select_image'.tr()),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
-    
-    if (_formKey.currentState!.validate()) {
-      var url = Uri.parse('${Constants.baseUrl}/rest/applications/create');
-      var headers = {'Content-Type': 'application/json'};
-      final int timestamp = dateAndTimeOfViolation!.millisecondsSinceEpoch;
-      var body = jsonEncode({
-        'description': description,
-        'place': place,
-        'lat': lat,
-        'lon': lon,
-        'status': status,
-        'dateOfViolation': timestamp,
-        'regionId': regionId,
-        'districtId': districtId,
-        'typeViolationsId': typeViolationsId,
-        'userId': userId,
-        'numberAuto': numberAuto,
-      });
-
-      try {
-        var response = await http.post(url, headers: headers, body: body);
-
-        if (response.statusCode == 200) {
-          print('Form submitted successfully');
-          var responseData = jsonDecode(response.body);
-          var applicationId = responseData['id'];
-          if (_image != null) {
-            await uploadFile(applicationId);
-          }
-        } else {
-          print('Failed to submit form');
-        }
-      } catch (error) {
-        print('Error creating application: $error');
-      }
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('success'.tr()),
-            content: Text('reviw_saved'.tr()),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    }
+Future<void> submitForm() async {
+  if (_image == null) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('error'.tr()),
+          content: Text('please_select_image'.tr()),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    return;
   }
+  
+  if (_formKey.currentState!.validate()) {
+    var url = Uri.parse('${Constants.baseUrl}/rest/applications/create');
+    var headers = {'Content-Type': 'application/json'};
+    final int timestamp = dateAndTimeOfViolation!.millisecondsSinceEpoch;
+    var body = jsonEncode({
+      'description': description,
+      'place': place,
+      'lat': lat,
+      'lon': lon,
+      'status': status,
+      'dateOfViolation': timestamp,
+      'regionId': regionId,
+      'districtId': districtId,
+      'typeViolationsId': typeViolationsId,
+      'userId': userId,
+      'numberAuto': numberAuto,
+    });
+
+    try {
+      var response = await http.post(url, headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        print('Form submitted successfully');
+        var responseData = jsonDecode(response.body);
+        var applicationId = responseData['id'];
+        if (_image != null) {
+          await uploadFile(applicationId);
+        }
+        
+        // Закрытие страницы формы после успешного создания записи
+        Navigator.pop(context);
+      } else {
+        print('Failed to submit form');
+      }
+    } catch (error) {
+      print('Error creating application: $error');
+    }
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('success'.tr()),
+          content: Text('reviw_saved'.tr()),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 
   Future<void> uploadFile(int applicationId) async {
     var url = Uri.parse('${Constants.baseUrl}/rest/attachments/upload');

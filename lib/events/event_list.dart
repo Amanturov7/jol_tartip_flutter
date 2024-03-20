@@ -53,37 +53,42 @@ Widget build(BuildContext context) {
     appBar: AppBar(
       title: Text('events'.tr()),
     ),
-    body: ListView.builder(
-      itemCount: events.length,
-      itemBuilder: (BuildContext context, int index) {
-        final event = events[index];
-        return Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Card(
-            elevation: 2.0,
-            child: ListTile(
-              title: Text(
-                event.title,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event.description,
-                    style: TextStyle(fontWeight: FontWeight.normal),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'address'.tr() + ' ${event.address}',
-                    style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
-                  ),
-                ],
+    body: RefreshIndicator(
+      onRefresh: () async {
+        fetchEvents();
+      },
+      child: ListView.builder(
+        itemCount: events.length,
+        itemBuilder: (BuildContext context, int index) {
+          final event = events[index];
+          return Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Card(
+              elevation: 2.0,
+              child: ListTile(
+                title: Text(
+                  event.title,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      event.description,
+                      style: TextStyle(fontWeight: FontWeight.normal),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'address'.tr() + ' ${event.address}',
+                      style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     ),
   );
 }

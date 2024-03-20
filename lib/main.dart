@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
       locale: context.locale,
       title: 'JolTartip',
      theme: ThemeData(
+      
   primarySwatch: Colors.blue,
   textSelectionTheme: TextSelectionThemeData(
     cursorColor:  Color(0xFF3BB5E9), 

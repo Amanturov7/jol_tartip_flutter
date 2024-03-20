@@ -265,6 +265,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
                 child: Text('OK'),
               ),

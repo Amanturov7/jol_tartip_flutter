@@ -18,6 +18,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
   int? id;
   String numberAuto = '';
   int pageNumber = 1;
+bool isLoading = false;
 
   @override
   void initState() {
@@ -26,40 +27,79 @@ class _ApplicationsListState extends State<ApplicationsList> {
     fetchFilterOptions();
   }
 
-  Future<void> fetchData() async {
-    try {
-      String url = '${Constants.baseUrl}/rest/applications/all';
-      url += '?page=$pageNumber';
+ Future<void> fetchData() async {
+  try {
+    setState(() {
+      isLoading = true; // Показать индикатор загрузки перед запросом
+    });
+    
+    String url = '${Constants.baseUrl}/rest/applications/all';
+    url += '?page=$pageNumber';
 
-      if (selectedFilter != null) {
-        url += '&typeViolations=$selectedFilter';
-      }
-
-      if (title.isNotEmpty) {
-        url += '&title=$title';
-      }
-
-      if (id != null) {
-        url += '&id=$id';
-      }
-
-      if (numberAuto.isNotEmpty) {
-        url += '&numberAuto=$numberAuto';
-      }
-
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        setState(() {
-          applications = jsonData['content'];
-        });
-      } else {
-        throw Exception('Failed to load applications');
-      }
-    } catch (error) {
-      print('Error fetching applications: $error');
+    if (selectedFilter != null) {
+      url += '&typeViolations=$selectedFilter';
     }
+
+    if (title.isNotEmpty) {
+      url += '&title=$title';
+    }
+
+    if (id != null) {
+      url += '&id=$id';
+    }
+
+    if (numberAuto.isNotEmpty) {
+      url += '&numberAuto=$numberAuto';
+    }
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      setState(() {
+        applications = jsonData['content'];
+      });
+      
+      // Загрузка фотографий после получения списка приложений
+      await loadImages();
+    } else {
+      throw Exception('Failed to load applications');
+    }
+  } catch (error) {
+    print('Error fetching applications: $error');
+  } finally {
+    setState(() {
+      isLoading = false; // Скрыть индикатор загрузки после получения данных или в случае ошибки
+    });
   }
+}
+
+  Future<void> onRefresh() async {
+    // Обработка свайпа для обновления
+    fetchData();
+  }
+
+Future<void> loadImages() async {
+  try {
+    // Создание списка асинхронных операций загрузки фотографий
+    List<Future<void>> futures = [];
+    for (var application in applications) {
+      String imageUrl = '${Constants.baseUrl}/rest/attachments/download/applications/${application['id']}';
+      futures.add(http.get(Uri.parse(imageUrl)).then((response) {
+        if (response.statusCode == 200) {
+          // Преобразование тела ответа в изображение и сохранение его в application
+          setState(() {
+            application['image'] = Image.memory(response.bodyBytes);
+          });
+        }
+      }));
+    }
+    // Дождитесь завершения всех операций загрузки фотографий
+    await Future.wait(futures);
+  } catch (error) {
+    print('Error loading images: $error');
+  }
+}
+
 
   Future<void> fetchFilterOptions() async {
     try {
@@ -288,66 +328,81 @@ class _ApplicationsListState extends State<ApplicationsList> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5.0,
-                  mainAxisSpacing: 5.0,
+  body: RefreshIndicator(
+  onRefresh: onRefresh,
+  color: Color(0xFF3BB5E9), // Измените на нужный вам цвет
+  backgroundColor: Colors.white, // Опционально: цвет фона под индикатором обновления
+  child: SingleChildScrollView(
+    physics: AlwaysScrollableScrollPhysics(),
+    child: Column(
+      children: [
+      isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3BB5E9)),
+              ),
+            )
+          : Container(),
+      Container(
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 5.0,
+            mainAxisSpacing: 5.0,
+          ),
+          itemCount: applications.length,
+          itemBuilder: (BuildContext context, int index) {
+            final application = applications[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailedViewApplicationPage(
+                      id: application['id'].toString(),
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                margin: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                itemCount: applications.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final application = applications[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => DetailedViewApplicationPage(
-      id: application['id'].toString(),
-    ),
-  ),
-);
-
-                    },
-                    child: Container(
-                      margin: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                '${Constants.baseUrl}/rest/attachments/download/applications/${application['id']}',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'violation_number'.tr() + ' ${application['id']}',
-                            style: TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                        child: Image.network(
+                          '${Constants.baseUrl}/rest/attachments/download/applications/${application['id']}',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
                       ),
                     ),
-                  );
-                },
+                    SizedBox(height: 8),
+                    Text(
+                      'violation_number'.tr() + ' ${application['id']}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
+    ],
+  ),
+),
+
+    ),
     );
   }
 }
