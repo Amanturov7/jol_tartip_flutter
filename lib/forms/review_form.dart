@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:jol_tartip_flutter/forms/image_selector_box.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http_parser/http_parser.dart';
@@ -472,27 +473,15 @@ class _ReviewFormPageState extends State<ReviewForm> {
                   ),
                 ),
               ),
-              SizedBox(height: 8),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: ElevatedButton(
-                  onPressed: handleSelectImage,
-                  child: Text('select_image'.tr()),
-                ),
-              ),
-              SizedBox(height: 8),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    var image = await takePhoto();
+    SizedBox(height: 8),
+                ImageSelectorBox(
+                  onSelectImage: (image) {
                     setState(() {
                       _image = image;
                     });
                   },
-                  child: Text('open_camera'.tr()),
+                  imageFile: _image,
                 ),
-              ),
               SizedBox(height: 8),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16),

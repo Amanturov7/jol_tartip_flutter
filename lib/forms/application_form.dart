@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:jol_tartip_flutter/constants.dart';
+import 'image_selector_box.dart'; // Импортируем класс ImageSelectorBox
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ViolationFormPage extends StatefulWidget {
   @override
@@ -35,17 +35,16 @@ class _ViolationFormPageState extends State<ViolationFormPage> {
   List<Map<String, dynamic>> violationsList = [];
   int? selectedViolationIndex;
 
-@override
-void initState() {
-  fetchData();
-  super.initState();
-  selectedViolationIndex = null;
-      _numberAutoController = TextEditingController(text: numberAuto);
-  fetchViolations();
-}
+  @override
+  void initState() {
+    fetchData();
+    super.initState();
+    selectedViolationIndex = null;
+    _numberAutoController = TextEditingController(text: numberAuto);
+    fetchViolations();
+  }
 
-
-   Future<void> fetchData() async {
+  Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     if (token != null) {
@@ -81,85 +80,84 @@ void initState() {
     }
   }
 
-Future<void> submitForm() async {
-  if (_image == null) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('error'.tr()),
-          content: Text('please_select_image'.tr()),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-    return;
-  }
-  
-  if (_formKey.currentState!.validate()) {
-    var url = Uri.parse('${Constants.baseUrl}/rest/applications/create');
-    var headers = {'Content-Type': 'application/json'};
-    final int timestamp = dateAndTimeOfViolation!.millisecondsSinceEpoch;
-    var body = jsonEncode({
-      'description': description,
-      'place': place,
-      'lat': lat,
-      'lon': lon,
-      'status': status,
-      'dateOfViolation': timestamp,
-      'regionId': regionId,
-      'districtId': districtId,
-      'typeViolationsId': typeViolationsId,
-      'userId': userId,
-      'numberAuto': numberAuto,
-    });
-
-    try {
-      var response = await http.post(url, headers: headers, body: body);
-
-      if (response.statusCode == 200) {
-        print('Form submitted successfully');
-        var responseData = jsonDecode(response.body);
-        var applicationId = responseData['id'];
-        if (_image != null) {
-          await uploadFile(applicationId);
-        }
-        
-        // Закрытие страницы формы после успешного создания записи
-        Navigator.pop(context);
-      } else {
-        print('Failed to submit form');
-      }
-    } catch (error) {
-      print('Error creating application: $error');
+  Future<void> submitForm() async {
+    if (_image == null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('error'.tr()),
+            content: Text('please_select_image'.tr()),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
     }
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('success'.tr()),
-          content: Text('reviw_saved'.tr()),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
+    
+    if (_formKey.currentState!.validate()) {
+      var url = Uri.parse('${Constants.baseUrl}/rest/applications/create');
+      var headers = {'Content-Type': 'application/json'};
+      final int timestamp = dateAndTimeOfViolation!.millisecondsSinceEpoch;
+      var body = jsonEncode({
+        'description': description,
+        'place': place,
+        'lat': lat,
+        'lon': lon,
+        'status': status,
+        'dateOfViolation': timestamp,
+        'regionId': regionId,
+        'districtId': districtId,
+        'typeViolationsId': typeViolationsId,
+        'userId': userId,
+        'numberAuto': numberAuto,
+      });
 
+      try {
+        var response = await http.post(url, headers: headers, body: body);
+
+        if (response.statusCode == 200) {
+          print('Form submitted successfully');
+          var responseData = jsonDecode(response.body);
+          var applicationId = responseData['id'];
+          if (_image != null) {
+            await uploadFile(applicationId);
+          }
+          
+          // Закрытие страницы формы после успешного создания записи
+          Navigator.pop(context);
+        } else {
+          print('Failed to submit form');
+        }
+      } catch (error) {
+        print('Error creating application: $error');
+      }
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('success'.tr()),
+            content: Text('reviw_saved'.tr()),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
   Future<void> uploadFile(int applicationId) async {
     var url = Uri.parse('${Constants.baseUrl}/rest/attachments/upload');
@@ -275,25 +273,21 @@ Future<void> submitForm() async {
                   },
                   decoration: InputDecoration(
                     hintText: 'address'.tr(),
-                    
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Color(0xFF3BB5E9)),
                       borderRadius: BorderRadius.circular(30.0),
-                      
                     ),
-                    
                   ),
-
                 ),
                 SizedBox(height: 8),
                 TextFormField(
                   readOnly: true,
                   controller: dateController,
                   onTap: selectDateAndTime,
-                    validator: (value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Пожалуйста, введите Дату и время нарушения';
                     }
@@ -353,49 +347,41 @@ Future<void> submitForm() async {
                   ],
                 ),
                 SizedBox(height: 8),
-        TextFormField(
-      controller: _numberAutoController,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Пожалуйста, введите номер автомобиля';
-        }
-        return null;
-      },
-      onChanged: (value) {
-        setState(() {
-          numberAuto = value;
-        });
-      },
-      decoration: InputDecoration(
-        hintText: 'gos_nomer'.tr(),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF3BB5E9)),
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-      ),
-    ),
+                TextFormField(
+                  controller: _numberAutoController,
+                  validator: (value) {
+                    if (value == null ||
+                    value.isEmpty) {
+                      return 'Пожалуйста, введите номер автомобиля';
+                    }
+                    return null;
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      numberAuto = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'gos_nomer'.tr(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () async {
-                    var image = await getImageFromGallery();
+                ImageSelectorBox(
+                  onSelectImage: (image) {
                     setState(() {
                       _image = image;
                     });
                   },
-                  child: Text('from_gallery'.tr()),
+                  imageFile: _image,
                 ),
-                ElevatedButton(
-                  onPressed: () async {
-                    var image = await takePhoto();
-                    setState(() {
-                      _image = image;
-                    });
-                  },
-                  child: Text('open_camera'.tr()),
-                ),
+                SizedBox(height: 8),
                 ElevatedButton(
                   onPressed: submitForm,
                   child: Container(
