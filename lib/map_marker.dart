@@ -3,7 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapMarkerPage extends StatefulWidget {
-  final Function(double, double)? onSave; 
+  final Function(double, double)? onSave;
 
   MapMarkerPage({Key? key, this.onSave}) : super(key: key);
 
@@ -22,25 +22,25 @@ class _MapMarkerPageState extends State<MapMarkerPage> {
     });
   }
 
- void _saveLocation() {
-  if (_latitude != null && _longitude != null && widget.onSave != null) {
-    widget.onSave!(_latitude!, _longitude!); 
+  void _saveLocation() {
+    if (_latitude != null && _longitude != null && widget.onSave != null) {
+      widget.onSave!(_latitude!, _longitude!);
+    }
+    Navigator.pop(context);
   }
-  Navigator.pop(context); 
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Set Marker'),
+        title: Text('Укажите местоположение'),
       ),
       body: Stack(
         children: [
           FlutterMap(
             options: MapOptions(
               center: LatLng(42.8746, 74.5698),
-              zoom: 13.0,
+              zoom: 16.0, 
               onTap: _handleTap,
             ),
             children: [
@@ -48,14 +48,14 @@ class _MapMarkerPageState extends State<MapMarkerPage> {
                 urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 subdomains: ['a', 'b', 'c'],
               ),
-              if (_latitude != null && _longitude != null) 
+              if (_latitude != null && _longitude != null)
                 MarkerLayer(
                   markers: [
                     Marker(
                       width: 80.0,
                       height: 80.0,
-                      point: LatLng(_latitude!, _longitude!), 
-                      child: Container(
+                      point: LatLng(_latitude!, _longitude!),
+                      child:  Container(
                         child: Icon(
                           Icons.location_pin,
                           size: 50,
@@ -67,7 +67,7 @@ class _MapMarkerPageState extends State<MapMarkerPage> {
                 ),
             ],
           ),
-          if (_latitude != null && _longitude != null) 
+          if (_latitude != null && _longitude != null)
             Positioned(
               bottom: 20,
               left: 20,
