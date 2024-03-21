@@ -8,7 +8,7 @@ import './screen/notifications_page.dart';
 import './screen/profile_page.dart';
 import './screen/complaints_page.dart';
 import './screen/forms.dart';
-import './settings_page.dart'; // Импорт новой страницы настроек
+import './settings_page.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -27,11 +27,10 @@ class _ImageSelectorBoxState extends State<ImageSelectorBox> {
             _showImagePicker(context);
           },
           child: Container(
-            width: 300,
             height: 200,
             decoration: BoxDecoration(
               color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(30),
             ),
             child: Center(
               child: widget.imageFile != null

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jol_tartip_flutter/forms/image_selector_box.dart';
+import 'package:jol_tartip_flutter/map_marker.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http_parser/http_parser.dart';
@@ -43,6 +44,44 @@ class _ReviewFormPageState extends State<ReviewForm> {
     super.initState();
   }
 
+
+
+
+void _handleLocationSelection(double latitude, double longitude) {
+  setState(() {
+    lat = latitude;
+    lon = longitude;
+    print(lat);
+    print(lon);
+  });
+}
+
+
+  void _selectLocation() async {
+  final location = await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => MapMarkerPage()),
+  );
+
+  if (location != null) {
+    setState(() {
+      lat = location[0]; 
+      lon = location[1]; 
+      print(lat);
+      print(lon);
+    });
+  }
+}
+
+
+
+
+
+
+
+
+
+
   Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -72,16 +111,16 @@ class _ReviewFormPageState extends State<ReviewForm> {
 
     switch (type) {
       case 'Дорожный знак':
-        roadSignId = null; // Сбрасываем значение предыдущего выбора
+        roadSignId = null; 
         break;
       case 'Освещение':
-        lightId = null; // Сбрасываем значение предыдущего выбора
+        lightId = null; 
         break;
       case 'Дорожные условия':
-        roadId = null; // Сбрасываем значение предыдущего выбора
+        roadId = null;
         break;
       case 'Экологические факторы':
-        ecologicFactorsId = null; // Сбрасываем значение предыдущего выбора
+        ecologicFactorsId = null; 
         break;
     }
 
@@ -106,7 +145,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
       print('Error fetching options: $error');
     }
 
-    // Устанавливаем выбранное значение из списка опций в соответствующее поле
     if (selectedOption != null) {
       switch (type) {
         case 'Дорожный знак':
@@ -126,7 +164,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
   }
 
   int? getTypeReferenceId(String? type) {
-    // Возвращаем соответствующий идентификатор для выбранного типа отзыва
     switch (type) {
       case 'Дорожный знак':
         return roadSignId;
@@ -275,7 +312,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
         },
       );
     } catch (error) {
-      // Show error dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -334,6 +370,8 @@ class _ReviewFormPageState extends State<ReviewForm> {
         title: Text('review'.tr()),
       ),
       body: SingleChildScrollView(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+
         child: Form(
           key: _formKey,
           child: Column(
@@ -341,7 +379,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
             children: [
               SizedBox(height: 16),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: DropdownButtonFormField<String>(
                   value: reviewType,
                   validator: (value) {
@@ -371,7 +408,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
               ),
               SizedBox(height: 8),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: DropdownButtonFormField<String>(
                   value: selectedOption,
                   validator: (value) {
@@ -394,7 +430,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
                     setState(() {
                       selectedOption = value;
 
-                      // В зависимости от выбранного типа отзыва, устанавливаем соответствующее значение
                       switch (reviewType) {
                         case 'Дорожный знак':
                           roadSignId = options.indexOf(selectedOption!);
@@ -421,7 +456,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
               ),
               SizedBox(height: 8),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: TextFormField(
                   onChanged: (value) {
                     setState(() {
@@ -448,7 +482,6 @@ class _ReviewFormPageState extends State<ReviewForm> {
               ),
               SizedBox(height: 8),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: TextFormField(
                   onChanged: (value) {
                     setState(() {
@@ -473,7 +506,7 @@ class _ReviewFormPageState extends State<ReviewForm> {
                   ),
                 ),
               ),
-    SizedBox(height: 8),
+                SizedBox(height: 8),
                 ImageSelectorBox(
                   onSelectImage: (image) {
                     setState(() {
@@ -482,9 +515,37 @@ class _ReviewFormPageState extends State<ReviewForm> {
                   },
                   imageFile: _image,
                 ),
+                       SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MapMarkerPage(
+                          onSave: _handleLocationSelection, 
+                        ),
+                      ),
+                    );
+                  },
+                  
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Указать адрес на карте',
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 169,208,158),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    minimumSize: Size(double.infinity, 70),
+                  ),
+                ),
               SizedBox(height: 8),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: ElevatedButton(
                   onPressed: handleSubmit,
                   child: Container(

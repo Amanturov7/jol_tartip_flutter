@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:jol_tartip_flutter/constants.dart';
 import 'package:jol_tartip_flutter/map_marker.dart';
-import 'image_selector_box.dart'; // Импортируем класс ImageSelectorBox
+import 'image_selector_box.dart'; 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -65,8 +65,8 @@ void _handleLocationSelection(double latitude, double longitude) {
 
   if (location != null) {
     setState(() {
-      lat = location[0]; // Извлекаем первое значение - широту
-      lon = location[1]; // Извлекаем второе значение - долготу
+      lat = location[0]; 
+      lon = location[1]; 
       print(lat);
       print(lon);
     });
@@ -160,7 +160,6 @@ void _handleLocationSelection(double latitude, double longitude) {
             await uploadFile(applicationId);
           }
           
-          // Закрытие страницы формы после успешного создания записи
           Navigator.pop(context);
         } else {
           print('Failed to submit form');
@@ -311,34 +310,6 @@ void _handleLocationSelection(double latitude, double longitude) {
                     ),
                   ),
                 ),
-                ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MapMarkerPage(
-          onSave: _handleLocationSelection, // Передаем функцию обратного вызова
-        ),
-      ),
-    );
-  },
-  child: Container(
-    width: double.infinity,
-    padding: EdgeInsets.all(16),
-    alignment: Alignment.center,
-    child: Text(
-      'Select Location',
-      style: TextStyle(fontSize: 20, color: Colors.white),
-    ),
-  ),
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Color(0xFF3BB5E9),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(30),
-    ),
-    minimumSize: Size(double.infinity, 70),
-  ),
-),
                 SizedBox(height: 8),
                 TextFormField(
                   readOnly: true,
@@ -429,6 +400,7 @@ void _handleLocationSelection(double latitude, double longitude) {
                     ),
                   ),
                 ),
+
                 SizedBox(height: 8),
                 ImageSelectorBox(
                   onSelectImage: (image) {
@@ -437,6 +409,35 @@ void _handleLocationSelection(double latitude, double longitude) {
                     });
                   },
                   imageFile: _image,
+                ),
+                 SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MapMarkerPage(
+                          onSave: _handleLocationSelection, 
+                        ),
+                      ),
+                    );
+                  },
+                  
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Указать адрес на карте',
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 169,208,158),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    minimumSize: Size(double.infinity, 70),
+                  ),
                 ),
                 SizedBox(height: 8),
                 ElevatedButton(

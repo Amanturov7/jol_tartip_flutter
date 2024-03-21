@@ -59,7 +59,6 @@ bool isLoading = false;
         applications = jsonData['content'];
       });
       
-      // Загрузка фотографий после получения списка приложений
       await loadImages();
     } else {
       throw Exception('Failed to load applications');
@@ -68,32 +67,28 @@ bool isLoading = false;
     print('Error fetching applications: $error');
   } finally {
     setState(() {
-      isLoading = false; // Скрыть индикатор загрузки после получения данных или в случае ошибки
+      isLoading = false;  
     });
   }
 }
 
   Future<void> onRefresh() async {
-    // Обработка свайпа для обновления
     fetchData();
   }
 
 Future<void> loadImages() async {
   try {
-    // Создание списка асинхронных операций загрузки фотографий
     List<Future<void>> futures = [];
     for (var application in applications) {
       String imageUrl = '${Constants.baseUrl}/rest/attachments/download/applications/${application['id']}';
       futures.add(http.get(Uri.parse(imageUrl)).then((response) {
         if (response.statusCode == 200) {
-          // Преобразование тела ответа в изображение и сохранение его в application
           setState(() {
             application['image'] = Image.memory(response.bodyBytes);
           });
         }
       }));
     }
-    // Дождитесь завершения всех операций загрузки фотографий
     await Future.wait(futures);
   } catch (error) {
     print('Error loading images: $error');
@@ -330,8 +325,8 @@ Future<void> loadImages() async {
       ),
   body: RefreshIndicator(
   onRefresh: onRefresh,
-  color: Color(0xFF3BB5E9), // Измените на нужный вам цвет
-  backgroundColor: Colors.white, // Опционально: цвет фона под индикатором обновления
+  color: Color(0xFF3BB5E9), 
+  backgroundColor: Colors.white, 
   child: SingleChildScrollView(
     physics: AlwaysScrollableScrollPhysics(),
     child: Column(

@@ -3,7 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapMarkerPage extends StatefulWidget {
-  final Function(double, double)? onSave; // Изменим тип функции
+  final Function(double, double)? onSave; 
 
   MapMarkerPage({Key? key, this.onSave}) : super(key: key);
 
@@ -12,7 +12,7 @@ class MapMarkerPage extends StatefulWidget {
 }
 
 class _MapMarkerPageState extends State<MapMarkerPage> {
-  double? _latitude; // Изменим тип переменных
+  double? _latitude;
   double? _longitude;
 
   void _handleTap(TapPosition pos, LatLng latLng) {
@@ -24,9 +24,9 @@ class _MapMarkerPageState extends State<MapMarkerPage> {
 
  void _saveLocation() {
   if (_latitude != null && _longitude != null && widget.onSave != null) {
-    widget.onSave!(_latitude!, _longitude!); // Вызываем функцию обратного вызова
+    widget.onSave!(_latitude!, _longitude!); 
   }
-  Navigator.pop(context); // Закрываем страницу после сохранения
+  Navigator.pop(context); 
 }
 
   @override
@@ -48,13 +48,13 @@ class _MapMarkerPageState extends State<MapMarkerPage> {
                 urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 subdomains: ['a', 'b', 'c'],
               ),
-              if (_latitude != null && _longitude != null) // Изменим условие наличия маркера
+              if (_latitude != null && _longitude != null) 
                 MarkerLayer(
                   markers: [
                     Marker(
                       width: 80.0,
                       height: 80.0,
-                      point: LatLng(_latitude!, _longitude!), // Используем текущие значения широты и долготы
+                      point: LatLng(_latitude!, _longitude!), 
                       child: Container(
                         child: Icon(
                           Icons.location_pin,
@@ -67,7 +67,7 @@ class _MapMarkerPageState extends State<MapMarkerPage> {
                 ),
             ],
           ),
-          if (_latitude != null && _longitude != null) // Изменим условие отображения текста и кнопки
+          if (_latitude != null && _longitude != null) 
             Positioned(
               bottom: 20,
               left: 20,
