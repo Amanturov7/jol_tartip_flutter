@@ -33,7 +33,7 @@ class _MapMarkerPageState extends State<MapMarkerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Укажите местоположение'),
+        title: Text('Местоположение'),
       ),
       body: Stack(
         children: [

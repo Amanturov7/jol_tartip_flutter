@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:jol_tartip_flutter/constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CustomMarker {
   final LatLng latLng;
@@ -103,7 +104,7 @@ class _MapsPageState extends State<MapsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Maps'),
+        title: Text('maps'.tr()),
       ),
       body: FlutterMap(
         options: MapOptions(
