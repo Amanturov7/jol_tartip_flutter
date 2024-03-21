@@ -25,6 +25,8 @@ class _MapsPageState extends State<MapsPage> {
   void initState() {
     super.initState();
     fetchData();
+        fetchEventData();
+
     fetchReviewData();
   }
 
@@ -51,7 +53,7 @@ class _MapsPageState extends State<MapsPage> {
             ),
           );
         } else {
-          print('Invalid entry: $entry');
+          print('Invalid  violation entry: $entry');
           return null;
         }
       }).whereType<CustomMarker>());
@@ -60,7 +62,7 @@ class _MapsPageState extends State<MapsPage> {
         customMarkers.addAll(markers);
       });
     } catch (error) {
-      print('Error fetching data: $error');
+      print('Error fetching  violation data: $error');
     }
   }
 
@@ -97,6 +99,45 @@ class _MapsPageState extends State<MapsPage> {
       });
     } catch (error) {
       print('Error fetching review data: $error');
+    }
+  }
+
+
+
+
+  Future<void> fetchEventData() async {
+    try {
+      final response = await http.get(Uri.parse('${Constants.baseUrl}/rest/events/points'));
+      final List<dynamic> data = json.decode(response.body);
+
+      print('Fetched event data: $data');
+
+      List<CustomMarker> eventMarkers = [];
+
+      eventMarkers.addAll(data.map((entry) {
+        final lat = entry['lat'] as double?;
+        final lon = entry['lon'] as double?;
+        if (lat != null && lon != null) {
+          return CustomMarker(
+            latLng: LatLng(lat, lon),
+            child: Image.asset(
+              'assets/images/blue_marker.png',
+              width: 10,
+              height: 10,
+              scale: 2.0,
+            ),
+          );
+        } else {
+          print('Invalid event entry: $entry');
+          return null;
+        }
+      }).whereType<CustomMarker>());
+
+      setState(() {
+        customMarkers.addAll(eventMarkers);
+      });
+    } catch (error) {
+      print('Error fetching event data: $error');
     }
   }
 

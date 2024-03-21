@@ -32,8 +32,8 @@ class _EventFormPageState extends State<EventFormPage> {
   @override
   void initState() {
     fetchData();
+        fetchEventTypes();
     super.initState();
-    fetchEventTypes();
   }
 
 
