@@ -129,7 +129,51 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                  SizedBox(height: 20),
+                
+                        SizedBox(height: 20),
+                        Container(
+                       height: 70,
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                        },
+                        child: Text(
+                          'about'.tr(),
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF3BB5E9),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        
+                      ),
+                      ),
+                          SizedBox(height: 20),
+                        Container(
+                       height: 70,
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                        },
+                        child: Text(
+                          'contact'.tr(),
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF3BB5E9),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        
+                      ),
+                      
+                    ),
+                      SizedBox(height: 20),
                   if (snapshot.data!)
                                                  
                     Container(
@@ -151,16 +195,15 @@ class ProfilePage extends StatelessWidget {
                           style: TextStyle(fontSize: 20, color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF3BB5E9),
+                          backgroundColor: Colors.red,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                         
                       ),
-                      
+
                     ),
-                  
                    
                 ],
               ),

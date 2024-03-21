@@ -59,6 +59,12 @@
   "violation_number": "Бузуу №",
   "violations": "Бузуулар",
   "maps": "Карта",
-  "violation_type": "Бузууyнун түрү"
+  "violation_type": "Бузууyнун түрү",
+  "contact": "Байланыш",
+  "about": "Биз жөнүндө",
+  "event_saved_successfully" : "Окуя ийгиликтүү сакталды",
+  "violation_saved": "Бузуу ийгиликтүү сакталды"
+
+
 
 }

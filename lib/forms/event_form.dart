@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:jol_tartip_flutter/map_marker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jol_tartip_flutter/constants.dart';
 
@@ -26,13 +27,42 @@ class _EventFormPageState extends State<EventFormPage> {
   int? _selectedEventType;
   int userId = 0;
   List<dynamic> _eventTypes = [];
-
+  double lat = 0.0;
+  double lon = 0.0;
   @override
   void initState() {
     fetchData();
     super.initState();
     fetchEventTypes();
   }
+
+
+
+void _handleLocationSelection(double latitude, double longitude) {
+  setState(() {
+    lat = latitude;
+    lon = longitude;
+    print(lat);
+    print(lon);
+  });
+}
+
+
+  void _selectLocation() async {
+  final location = await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => MapMarkerPage()),
+  );
+
+  if (location != null) {
+    setState(() {
+      lat = location[0]; 
+      lon = location[1]; 
+      print(lat);
+      print(lon);
+    });
+  }
+}
 
   Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -113,6 +143,9 @@ class _EventFormPageState extends State<EventFormPage> {
           'address': _addressController.text,
           'typeEventId': _selectedEventType,
           'userId': userId,
+          'lat': lat,
+          'lon': lon,
+
         }),
       );
 
@@ -122,7 +155,6 @@ class _EventFormPageState extends State<EventFormPage> {
       _descriptionController.clear();
       _addressController.clear();
 
-      // Показываем диалоговое окно об успешном сохранении события
   
        showDialog(
       context: context,
@@ -133,8 +165,8 @@ class _EventFormPageState extends State<EventFormPage> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Закрываем диалоговое окно
-                Navigator.of(context).pop(); // Закрываем страницу
+                Navigator.of(context).pop(); 
+                Navigator.of(context).pop(); 
               },
               child: Text('OK'),
             ),
@@ -231,7 +263,7 @@ class _EventFormPageState extends State<EventFormPage> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 8),
             TextFormField(
               controller: _descriptionController,
               decoration: InputDecoration(
@@ -245,7 +277,7 @@ class _EventFormPageState extends State<EventFormPage> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 8),
             TextFormField(
               readOnly: true,
               controller: dateStartController,
@@ -266,7 +298,7 @@ class _EventFormPageState extends State<EventFormPage> {
             ),
           ),
         ),
-        SizedBox(height: 16),
+        SizedBox(height: 8),
         TextFormField(
           readOnly: true,
           controller: dateEndController,
@@ -287,7 +319,7 @@ class _EventFormPageState extends State<EventFormPage> {
             ),
           ),
         ),
-        SizedBox(height: 16),
+        SizedBox(height: 8),
         TextFormField(
           controller: _addressController,
           decoration: InputDecoration(
@@ -301,7 +333,7 @@ class _EventFormPageState extends State<EventFormPage> {
             ),
           ),
         ),
-        SizedBox(height: 16),
+        SizedBox(height: 8),
         DropdownButtonFormField(
           value: _selectedEventType,
           items: _eventTypes.map<DropdownMenuItem<int>>((eventType) {
@@ -326,7 +358,36 @@ class _EventFormPageState extends State<EventFormPage> {
             ),
           ),
         ),
-        SizedBox(height: 16),
+            SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MapMarkerPage(
+                          onSave: _handleLocationSelection, 
+                        ),
+                      ),
+                    );
+                  },
+                  
+                  child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Указать адрес на карте',
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 169,208,158),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    minimumSize: Size(double.infinity, 70),
+                  ),
+                ),
+        SizedBox(height: 8),
         ElevatedButton(
           onPressed: submit,
           child: Container(

@@ -172,7 +172,7 @@ void _handleLocationSelection(double latitude, double longitude) {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('success'.tr()),
-            content: Text('reviw_saved'.tr()),
+            content: Text('violation_saved'.tr()),
             actions: <Widget>[
               TextButton(
                 onPressed: () {

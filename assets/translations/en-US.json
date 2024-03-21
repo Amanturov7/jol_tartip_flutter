@@ -33,7 +33,7 @@
   "please_select_image": "Please select the image",
   "please_address": "Please provide your address before saving your application.",
   "success": "Success",
-  "reviw_saved": "The review has been successfully created.",
+  "review_saved": "The review successfully saved",
   "review_save_error": "An error occurred while creating a review",
   "review": "Review",
   "select_review_type": "Select review type",
@@ -59,6 +59,13 @@
   "no_violations": "No violations!",
   "select_language": "Select language",
   "settings": "Settings",
-  "violation_type": "Violation type"
+  "violation_type": "Violation type",
+  "contact": "Contact",
+  "about": "About us",
+  "event_saved_successfully" : "The event successfully saved",
+  "violation_saved": "The violation successfully saved"
+
+
+
 
 }
