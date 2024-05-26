@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jol_tartip_flutter/about_page.dart';
+import 'package:jol_tartip_flutter/applications_reviews_page.dart';
 import 'package:jol_tartip_flutter/contact_page.dart';
 import 'package:jol_tartip_flutter/main.dart';
 import 'package:jol_tartip_flutter/settings_page.dart';
@@ -23,16 +24,12 @@ class ProfilePage extends StatelessWidget {
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                
                 children: [
-                  
                   if (snapshot.data!)
-                  
                     Container(
-                      
+                      height: 70,
                       width: double.infinity,
                       padding: EdgeInsets.symmetric(horizontal: 16),
-                       height: 70,
                       child: ElevatedButton(
                         onPressed: () async {
                           Navigator.push(
@@ -42,7 +39,6 @@ class ProfilePage extends StatelessWidget {
                             ),
                           );
                         },
-                        
                         child: Text(
                           'my_details'.tr(),
                           style: TextStyle(fontSize: 20, color: Colors.white),
@@ -55,9 +51,34 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
+                        SizedBox(height: 20),
+                  // Кнопка для перехода на страницу "Нарушения и отзывы"
+                  Container(
+                    height: 70,
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ApplicationReviewsPage()),
+                        );
+                      },
+                      child: Text(
+                        'Мои обращения'.tr(),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF3BB5E9),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                  ),
                   if (!snapshot.data!)
                     Container(
-                       height: 70,
+                      height: 70,
                       width: double.infinity,
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: ElevatedButton(
@@ -81,8 +102,9 @@ class ProfilePage extends StatelessWidget {
                     ),
                   if (!snapshot.hasData || !snapshot.data!) SizedBox(height: 20),
                   if (!snapshot.hasData || !snapshot.data!)
+                  
                     Container(
-                       height: 70,
+                      height: 70,
                       width: double.infinity,
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: ElevatedButton(
@@ -104,90 +126,82 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-
                   SizedBox(height: 20),
-
-                     Container(
-                      
-                       height: 70,
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SettingsPage()),
-                          );
-                        },
-                        child: Text(
-                          'settings'.tr(),
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF3BB5E9),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
+                  Container(
+                    height: 70,
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SettingsPage()),
+                        );
+                      },
+                      child: Text(
+                        'settings'.tr(),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF3BB5E9),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                     ),
-                
-                        SizedBox(height: 20),
-                        Container(
-                       height: 70,
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                                  Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AboutPage()),
-            );
-                        },
-                        child: Text(
-                          'about'.tr(),
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF3BB5E9),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    height: 70,
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AboutPage()),
+                        );
+                      },
+                      child: Text(
+                        'about'.tr(),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
-                      ),
-                          SizedBox(height: 20),
-                        Container(
-                       height: 70,
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                           Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ContactPage()),
-            );
-                        },
-                        child: Text(
-                          'contact'.tr(),
-                          style: TextStyle(fontSize: 20, color: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF3BB5E9),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF3BB5E9),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        
                       ),
-                      
                     ),
-                      SizedBox(height: 20),
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    height: 70,
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ContactPage()),
+                        );
+                      },
+                      child: Text(
+                        'contact'.tr(),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF3BB5E9),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
                   if (snapshot.data!)
-                                                 
                     Container(
-                       height: 70,
+                      height: 70,
                       width: double.infinity,
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: ElevatedButton(
@@ -210,11 +224,9 @@ class ProfilePage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        
                       ),
-
                     ),
-                   
+              
                 ],
               ),
             ),
