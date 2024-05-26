@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:jol_tartip_flutter/events/detailed_view_event.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'dart:convert';
 import 'package:jol_tartip_flutter/constants.dart';
 
 class EventsList extends StatefulWidget {
@@ -33,7 +34,6 @@ class _EventsListState extends State<EventsList> {
       print('Error fetching events: $error');
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,46 +48,30 @@ class _EventsListState extends State<EventsList> {
           itemCount: events.length,
           itemBuilder: (BuildContext context, int index) {
             final event = events[index];
-            if (event is Map<String, dynamic>) {
-              return Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 2.0,
-                  child: ListTile(
-                    title: Text(
-                      event['title'],
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          event['description'],
-                          style: TextStyle(fontWeight: FontWeight.normal),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'address'.tr() + ' ${event['address']}',
-                          style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'lat: ${event['lat']}',
-                          style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'lon: ${event['lon']}',
-                          style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
-                        ),
-                      ],
-                    ),
+            return Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Card(
+                elevation: 2.0,
+                child: ListTile(
+                  title: Text(
+                    event['title'],
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  subtitle: Text(
+                    event['description'],
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailedViewEventPage(id:event['id'].toString(), fetchData: fetchEvents,),
+                      ),
+                    );
+                  },
                 ),
-              );
-            } else {
-              return Container(); // Или любой другой виджет по вашему выбору
-            }
+              ),
+            );
           },
         ),
       ),

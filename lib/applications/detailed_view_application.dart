@@ -149,11 +149,11 @@ class _DetailedViewApplicationPageState
                         ),
                         TextButton(
                           onPressed: () {
-  // Вызываем функцию для удаления нарушения
-  deleteApplication();
-  // Закрываем диалоговое окно
-  Navigator.of(context).pop();
-},
+                                  // Вызываем функцию для удаления нарушения
+                                  deleteApplication();
+                                  // Закрываем диалоговое окно
+                                  Navigator.of(context).pop();
+                                },
 
                           child: Text('Да'),
                         ),
