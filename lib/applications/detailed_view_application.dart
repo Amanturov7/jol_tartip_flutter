@@ -3,17 +3,21 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:jol_tartip_flutter/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailedViewApplicationPage extends StatefulWidget {
   final String id;
+    final Function? fetchData; // Сделаем fetchData необязательным
 
-  DetailedViewApplicationPage({required this.id});
+  DetailedViewApplicationPage({required this.id, required this.fetchData});
 
   @override
-  _DetailedViewApplicationPageState createState() => _DetailedViewApplicationPageState();
+  _DetailedViewApplicationPageState createState() =>
+      _DetailedViewApplicationPageState();
 }
 
-class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPage> {
+class _DetailedViewApplicationPageState
+    extends State<DetailedViewApplicationPage> {
   late TextEditingController titleController;
   late TextEditingController dateController;
   late TextEditingController numberAutoController;
@@ -21,7 +25,7 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
 
   List<dynamic> violationsList = [];
   Map<String, dynamic>? applicationData;
-  bool isEditing = false;
+  int? userId;
 
   @override
   void initState() {
@@ -31,17 +35,41 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
   }
 
   Future<void> fetchData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token != null) {
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/rest/user/user?token=$token'),
+        headers: <String, String>{
+          'token': token,
+        },
+      );
+      if (response.statusCode == 200) {
+        final userData = json.decode(utf8.decode(response.bodyBytes));
+        setState(() {
+          userId = userData['id'];
+        });
+      } else {
+        throw Exception('Failed to load user data');
+      }
+    }
+
     try {
-      final response = await http.get(Uri.parse("${Constants.baseUrl}/rest/applications/${widget.id}"));
+      final response = await http
+          .get(Uri.parse("${Constants.baseUrl}/rest/applications/${widget.id}"));
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(utf8.decode(response.bodyBytes));
         setState(() {
           applicationData = jsonData;
-          titleController = TextEditingController(text: applicationData!['title']);
-          dateController = TextEditingController(text: applicationData!['dateOfViolation']);
-          numberAutoController = TextEditingController(text: applicationData!['numberAuto']);
-          descriptionController = TextEditingController(text: applicationData!['description']);
+          titleController =
+              TextEditingController(text: applicationData!['title']);
+          dateController = TextEditingController(
+              text: applicationData!['dateOfViolation']);
+          numberAutoController =
+              TextEditingController(text: applicationData!['numberAuto']);
+          descriptionController =
+              TextEditingController(text: applicationData!['description']);
         });
       } else {
         throw Exception('Failed to load application details');
@@ -53,7 +81,8 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
 
   Future<void> fetchViolations() async {
     try {
-      final response = await http.get(Uri.parse('${Constants.baseUrl}/rest/violations/all'));
+      final response =
+          await http.get(Uri.parse('${Constants.baseUrl}/rest/violations/all'));
       if (response.statusCode == 200) {
         final data = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         setState(() {
@@ -65,35 +94,81 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
     }
   }
 
+ Future<void> deleteApplication() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  if (token != null) {
+    try {
+      final response = await http.delete(
+        Uri.parse('${Constants.baseUrl}/rest/applications/delete/${widget.id}'),
+        headers: <String, String>{
+          'token': token,
+        },
+      );
+      if (response.statusCode == 200) {
+        // Нарушение успешно удалено
+        Navigator.pop(context); // Возвращаемся на предыдущий экран
+        // Обновляем список нарушений
+        fetchViolations();
+          if (widget.fetchData != null) {
+    widget.fetchData!();
+  }
+      } else {
+        throw Exception('Failed to delete application');
+      }
+    } catch (error) {
+      print('Error deleting application: $error');
+    }
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('violation_number'.tr()  +' ${applicationData!['id']}'),
+        title: Text(
+          'violation_number'.tr() + ' ${applicationData!['id']}',
+        ),
         actions: [
-          isEditing
-              ? IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isEditing = false;
-                    });
+          if (userId != null && userId == applicationData!['userId'])
+            IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Удалить'),
+                      content: Text('Вы хотите удалить нарушение?'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Закрываем диалоговое окно
+                          },
+                          child: Text('Нет'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+  // Вызываем функцию для удаления нарушения
+  deleteApplication();
+  // Закрываем диалоговое окно
+  Navigator.of(context).pop();
+},
+
+                          child: Text('Да'),
+                        ),
+                      ],
+                    );
                   },
-                  icon: Icon(Icons.close),
-                )
-              : IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isEditing = true;
-                    });
-                  },
-                  icon: Icon(Icons.edit),
-                ),
+                );
+              },
+              icon: Icon(Icons.delete),
+            ),
         ],
       ),
       body: applicationData != null
           ? SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
-
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -124,7 +199,8 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         image: DecorationImage(
-                          image: NetworkImage('${Constants.baseUrl}/rest/attachments/download/applications/${widget.id}'),
+                          image: NetworkImage(
+                              '${Constants.baseUrl}/rest/attachments/download/applications/${widget.id}'),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -134,7 +210,8 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                   Column(
                     children: [
                       TextFormField(
-                        controller: TextEditingController(text: applicationData!['title']),
+                        controller:
+                            TextEditingController(text: applicationData!['title']),
                         decoration: InputDecoration(
                           labelText: 'violation_type'.tr(),
                           border: OutlineInputBorder(
@@ -160,7 +237,7 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                             borderRadius: BorderRadius.circular(30.0),
                           ),
                         ),
-                        readOnly: !isEditing,
+                        readOnly: true,
                       ),
                       SizedBox(height: 10),
                       TextFormField(
@@ -175,10 +252,9 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                             borderRadius: BorderRadius.circular(30.0),
                           ),
                         ),
-                        readOnly: !isEditing,
+                        readOnly: true,
                       ),
                       SizedBox(height: 10),
-
                       TextFormField(
                         controller: descriptionController,
                         decoration: InputDecoration(
@@ -191,33 +267,9 @@ class _DetailedViewApplicationPageState extends State<DetailedViewApplicationPag
                             borderRadius: BorderRadius.circular(30.0),
                           ),
                         ),
-                        readOnly: !isEditing,
+                        readOnly: true,
                       ),
                       SizedBox(height: 20),
-                      isEditing
-                          ?  
-                          Container( child: ElevatedButton(
-                            
-              onPressed: (){},
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(16),
-                alignment: Alignment.center,
-                child: Text(
-                  'save'.tr(),
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF3BB5E9),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                minimumSize: Size(double.infinity, 70),
-              ),
-            )
-                          )
-                          : SizedBox.shrink(),
                     ],
                   ),
                 ],

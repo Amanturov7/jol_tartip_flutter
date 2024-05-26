@@ -142,14 +142,15 @@ class _HomePageState extends State<HomePage> {
                       final application = recentApplications[index];
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailedViewApplicationPage(
-                                id: application['id'].toString(),
-                              ),
-                            ),
-                          );
+                                 Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => DetailedViewApplicationPage(
+      id: application['id'].toString(),
+      fetchData: fetchRecentData, // Передача функции fetchData
+    ),
+  ),
+);
                         },
                         child: Container(
                           margin: EdgeInsets.all(5),
