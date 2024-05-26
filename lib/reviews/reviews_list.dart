@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:jol_tartip_flutter/constants.dart';
+import 'package:jol_tartip_flutter/reviews/detailed_vew_review.dart';
 
 class ReviewsList extends StatefulWidget {
   @override
@@ -322,46 +323,58 @@ class _ReviewsListState extends State<ReviewsList> {
         ],
       ),
 
-      body: RefreshIndicator(
-        onRefresh: onRefresh,
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 5.0,
-            mainAxisSpacing: 5.0,
-          ),
-          itemCount: reviews.length,
-          itemBuilder: (BuildContext context, int index) {
-            final review = reviews[index];
-            return Container(
-              margin: EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        '${Constants.baseUrl}/rest/attachments/download/reviews/${review['id']}',
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'review_number'.tr() + '${review['id']}',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                  ),
-                ],
+  body: RefreshIndicator(
+    onRefresh: onRefresh,
+    child: GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 5.0,
+        mainAxisSpacing: 5.0,
+      ),
+      itemCount: reviews.length,
+      itemBuilder: (BuildContext context, int index) {
+        final review = reviews[index];
+        return GestureDetector(
+          onTap: () {
+            // При нажатии на отзыв переходим на страницу детального просмотра
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => DetailedViewReviewPage(id: review['id'].toString(),  fetchData: fetchData,),
               ),
             );
           },
-        ),
-      ),
-    );
-  }
+          child: Container(
+            margin: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      '${Constants.baseUrl}/rest/attachments/download/reviews/${review['id']}',
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'review_number'.tr() + '${review['id']}',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+  ),
+);
+
+}
 }
 
