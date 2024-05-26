@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jol_tartip_flutter/about_page.dart';
+import 'package:jol_tartip_flutter/contact_page.dart';
 import 'package:jol_tartip_flutter/main.dart';
 import 'package:jol_tartip_flutter/settings_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -137,6 +139,10 @@ class ProfilePage extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: ElevatedButton(
                         onPressed: () async {
+                                  Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AboutPage()),
+            );
                         },
                         child: Text(
                           'about'.tr(),
@@ -158,6 +164,10 @@ class ProfilePage extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: ElevatedButton(
                         onPressed: () async {
+                           Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ContactPage()),
+            );
                         },
                         child: Text(
                           'contact'.tr(),
