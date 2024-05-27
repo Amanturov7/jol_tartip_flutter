@@ -53,6 +53,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                         SizedBox(height: 20),
                   // Кнопка для перехода на страницу "Нарушения и отзывы"
+                   if (snapshot.data!)
                   Container(
                     height: 70,
                     width: double.infinity,
@@ -76,6 +77,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
+
                   if (!snapshot.data!)
                     Container(
                       height: 70,

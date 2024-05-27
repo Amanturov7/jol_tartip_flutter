@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // Импортируйте плагин
+import 'package:jol_tartip_flutter/sos/sos_page.dart';
 import './auth/login_page.dart';
 import './auth/signup_page.dart';
 import './screen/home_page.dart';
@@ -8,13 +10,17 @@ import './screen/notifications_page.dart';
 import './screen/profile_page.dart';
 import './screen/complaints_page.dart';
 import './screen/forms.dart';
-import './settings_page.dart'; 
+import './settings_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+  final InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
   runApp(
-    
     EasyLocalization(
       child: MyApp(),
       supportedLocales: [Locale('en', 'US'), Locale('ru', 'RU'), Locale('ky', 'KG')],
@@ -29,22 +35,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
-
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       title: 'JolTartip',
-     theme: ThemeData(
-      
-  primarySwatch: Colors.blue,
-  textSelectionTheme: TextSelectionThemeData(
-    cursorColor:  Color(0xFF3BB5E9), 
-    selectionColor:  Color(0xFF3BB5E9), 
-    selectionHandleColor:  Color(0xFF3BB5E9), 
-  ),
-),
-
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Color(0xFF3BB5E9),
+          selectionColor: Color(0xFF3BB5E9),
+          selectionHandleColor: Color(0xFF3BB5E9),
+        ),
+      ),
       initialRoute: '/',
       routes: {
         '/': (context) => MyHomePage(),
@@ -52,7 +54,8 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/maps': (context) => MapsPage(),
         '/notifications': (context) => NotificationsPage(),
-        '/settings': (context) => SettingsPage(), 
+        '/settings': (context) => SettingsPage(),
+        '/sos': (context) => SOSPage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/login') {
@@ -79,39 +82,42 @@ class _MyHomePageState extends State<MyHomePage> {
     MapsPage(),
     ProfilePage(),
   ];
-final homeLabel = 'home'.tr();
-final complaintsLabel = 'applications'.tr();
-final createLabel = 'create'.tr();
-final mapsLabel = 'maps'.tr();
-final profileLabel = 'profile'.tr();
+
+  final List<String> _labels = [
+    'home'.tr(),
+    'applications'.tr(),
+    'create'.tr(),
+    'maps'.tr(),
+    'profile'.tr(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-      items: <BottomNavigationBarItem>[
-  BottomNavigationBarItem(
-    icon: Icon(Icons.home),
-    label: homeLabel,
-  ),
-  BottomNavigationBarItem(
-    icon: Icon(Icons.assignment),
-    label: complaintsLabel,
-  ),
-  BottomNavigationBarItem(
-    icon: Icon(Icons.playlist_add),
-    label: createLabel,
-  ),
-  BottomNavigationBarItem(
-    icon: Icon(Icons.map),
-    label: mapsLabel,
-  ),
-  BottomNavigationBarItem(
-    icon: Icon(Icons.person),
-    label: profileLabel,
-  ),
-],
-
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: _labels[0],
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: _labels[1],
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.playlist_add),
+            label: _labels[2],
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: _labels[3],
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: _labels[4],
+          ),
+        ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.black,
@@ -128,4 +134,3 @@ final profileLabel = 'profile'.tr();
     });
   }
 }
-

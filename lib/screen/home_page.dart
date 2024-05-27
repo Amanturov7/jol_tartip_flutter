@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jol_tartip_flutter/applications/detailed_view_application.dart';
 import 'package:jol_tartip_flutter/reviews/detailed_vew_review.dart';
+import 'package:jol_tartip_flutter/sos/sos_button.dart';
 import 'dart:convert';
 import '../search_results_page.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -14,6 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String searchQuery = '';
+  bool hasNewSOS = false;
 
   TextEditingController _searchController = TextEditingController();
 
@@ -74,20 +76,28 @@ Future<void> fetchRecentReviews() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Text('home'.tr()),
-            Spacer(),
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {
-                Navigator.pushNamed(context, '/notifications');
+    appBar: AppBar(
+  title: Row(
+    children: [
+      Text('home'.tr()),
+      Spacer(),
+      IconButton(
+        icon: Icon(Icons.notifications),
+        onPressed: () {
+          Navigator.pushNamed(context, '/notifications');
+        },
+      ),
+            SOSButton(
+              onNewSOS: (bool newSOS) {
+                setState(() {
+                  hasNewSOS = newSOS;
+                });
               },
             ),
-          ],
-        ),
-      ),
+    ],
+  ),
+),
+
       body: isLoading
           ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3BB5E9)))) // Show loading indicator with specified color
           : SingleChildScrollView(

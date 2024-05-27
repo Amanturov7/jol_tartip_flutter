@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jol_tartip_flutter/forms/event_form.dart';
 import 'package:jol_tartip_flutter/forms/review_form.dart';
+import 'package:jol_tartip_flutter/sos/sos_form.dart';
 import '../forms/application_form.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -106,7 +107,7 @@ class FormsPage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ViolationFormPage()),
+                MaterialPageRoute(builder: (context) => CreateSosForm()),
               );
             },
             child: Text('SOS', style: TextStyle(fontSize: 20, color: Colors.white)),

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:jol_tartip_flutter/reviews/detailed_vew_review.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jol_tartip_flutter/constants.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:jol_tartip_flutter/applications/detailed_view_application.dart';
 
 class ReviewsListPage extends StatefulWidget {
   final bool isArchived;
@@ -15,11 +18,15 @@ class ReviewsListPage extends StatefulWidget {
 
 class _ReviewsListPageState extends State<ReviewsListPage> {
   late int userId;
+  bool isLoading = false;
+  List<dynamic> reviews = [];
 
   @override
   void initState() {
     super.initState();
-    fetchUserId();
+    fetchUserId().then((_) {
+      fetchReviews(widget.isArchived);
+    });
   }
 
   Future<void> fetchUserId() async {
@@ -43,38 +50,11 @@ class _ReviewsListPageState extends State<ReviewsListPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false, // убираем кнопку "назад"
-      ),
-      body: FutureBuilder<List<ReviewDto>>(
-        future: fetchReviews(widget.isArchived),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(snapshot.data![index].title),
-                  subtitle: Text(snapshot.data![index].description),
-                  // Дополнительные поля отзыва, если они есть
-                );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return Text('Ошибка: ${snapshot.error}');
-          }
-          return Container();
-        },
-      ),
-    );
-  }
+  Future<void> fetchReviews(bool isArchived) async {
+    setState(() {
+      isLoading = true;
+    });
 
-  Future<List<ReviewDto>> fetchReviews(bool isArchived) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final response = await http.get(
@@ -86,24 +66,99 @@ class _ReviewsListPageState extends State<ReviewsListPage> {
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      return data.map((review) => ReviewDto.fromJson(review)).toList();
+      setState(() {
+        reviews = data;
+      });
     } else {
       throw Exception('Ошибка при загрузке отзывов');
     }
+
+    setState(() {
+      isLoading = false;
+    });
   }
-}
 
-class ReviewDto {
-  final String title;
-  final String description;
-
-  ReviewDto({required this.title, required this.description});
-
-  factory ReviewDto.fromJson(Map<String, dynamic> json) {
-    return ReviewDto(
-      title: json['title'],
-      description: json['description'],
-      // Инициализируйте дополнительные поля отзыва
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+      ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3BB5E9)),
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: () => fetchReviews(widget.isArchived),
+              color: Color(0xFF3BB5E9),
+              backgroundColor: Colors.white,
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    Container(
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 5.0,
+                          mainAxisSpacing: 5.0,
+                        ),
+                        itemCount: reviews.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final review = reviews[index];
+                          return GestureDetector(
+                            onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailedViewReviewPage(
+              id: review['id'].toString(),
+              fetchData: fetchReviews, // Передача функции fetchRecentReviews
+            ),
+          ),
+        );                            },
+                            child: Container(
+                              margin: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        '${Constants.baseUrl}/rest/attachments/download/reviews/${review['id']}',
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                      ),
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      'review_number'.tr() + ' ${review['id']}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }
