@@ -88,6 +88,7 @@ Future<void> _submitForm() async {
           final sosData = {
             'title': _titleController.text,
             'description': _descriptionController.text,
+            'address': _addressController.text,
             'lat': _latitude, 
             'lon': _longitude,
             'userId': userId, 
@@ -213,6 +214,22 @@ if (response.statusCode == 200 || response.statusCode == 201) {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Please enter description';
+                    }
+                    return null;
+                  },
+                ),
+                      SizedBox(height: 10),
+                TextFormField(
+                  controller: _addressController,
+                  decoration: InputDecoration(
+                    labelText: 'address'.tr(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter address';
                     }
                     return null;
                   },

@@ -75,6 +75,21 @@ class DetailedViewSOSPage extends StatelessWidget {
                 ),
               ),
             ),
+                        SizedBox(height: 10),
+                TextFormField(
+              initialValue: sos['address'],
+              readOnly: true,
+              decoration: InputDecoration(
+                hintText: 'address'.tr(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+            ),
             SizedBox(height: 10),
             TextFormField(
               initialValue: sos['description'],
