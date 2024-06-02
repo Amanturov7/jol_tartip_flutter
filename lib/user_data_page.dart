@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -111,9 +112,10 @@ class _UserDataPageState extends State<UserDataPage> {
     }
   }
 
-  Future<Uint8List> fetchAvatar(int id) async {
-    final url = Uri.parse('${Constants.baseUrl}/rest/attachments/download/avatar/user/${id}');
+ Future<Uint8List> fetchAvatar(int id) async {
+  final url = Uri.parse('${Constants.baseUrl}/rest/attachments/download/avatar/user/${id}');
 
+  try {
     final response = await http.get(url);
     if (response.statusCode == 200) {
       return response.bodyBytes;
@@ -121,7 +123,14 @@ class _UserDataPageState extends State<UserDataPage> {
       print('Error fetching avatar: ${response.statusCode}');
       throw Exception('Failed to load user avatar');
     }
+  } catch (e) {
+    print('Error fetching avatar: $e');
+    // Загружаем дефолтное фото из assets/images/logo.png
+    final ByteData data = await rootBundle.load('assets/images/logo.png');
+    return data.buffer.asUint8List();
   }
+}
+
 
   Future<void> loadAvatarIfNeeded() async {
     if (_avatarImageBytes == null) {
@@ -152,6 +161,7 @@ class _UserDataPageState extends State<UserDataPage> {
     }
   }
 
+
   Future<void> getImageFromGallery() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -160,7 +170,8 @@ class _UserDataPageState extends State<UserDataPage> {
       setState(() {
         _image = File(pickedFile.path);
       });
-      await uploadAvatar(); // Добавлен вызов uploadAvatar()
+      await uploadAvatar(); 
+      loadAvatar();// Добавлен вызов uploadAvatar()
     }
   }
 
@@ -172,7 +183,8 @@ class _UserDataPageState extends State<UserDataPage> {
       setState(() {
         _image = File(pickedFile.path);
       });
-      await uploadAvatar(); // Добавлен вызов uploadAvatar()
+      await uploadAvatar();
+      loadAvatar(); 
     }
   }
 
@@ -205,11 +217,12 @@ class _UserDataPageState extends State<UserDataPage> {
       final url = Uri.parse('${Constants.baseUrl}/rest/user/$id/avatar');
       final response = await http.delete(
         url,
-        headers: <String, String>{'Authorization': 'Bearer $token'},
+        headers: <String, String>{'Authorization': '$token'},
       );
 
       if (response.statusCode == 200) {
         print('Avatar deleted successfully');
+        loadAvatar();
       } else {
         print('Failed to delete avatar: ${response.statusCode}');
       }
@@ -217,41 +230,88 @@ class _UserDataPageState extends State<UserDataPage> {
   }
 
   void showFullScreenImage() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Image.memory(
-                _avatarImageBytes!,
-                fit: BoxFit.cover,
-              ),
-              ButtonBar(
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      deleteAvatar();
-                      Navigator.pop(context);
-                    },
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            _avatarImageBytes != null
+                ? Image.memory(
+                    _avatarImageBytes!,
+                    fit: BoxFit.cover,
+                  )
+                : CircleAvatar(
+                    radius: 80,
+                    backgroundColor: Colors.grey,
+                    child: Image.asset('assets/images/logo.png'), // Загружаем изображение по умолчанию
                   ),
-                  IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      updateAvatar();
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+            ButtonBar(
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    deleteAvatar();
+                    Navigator.pop(context);
+                  },
+                ),
+               IconButton(
+  icon: Icon(Icons.edit),
+  onPressed: () {
+    setState(() {
+      isEditing = true;
+    });
+    showAvatarOptions(); 
+    loadAvatar();
+  },
+),
+
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+void showAvatarOptions() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Выберите источник'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              title: Text('Загрузить из галереи'),
+              onTap: () {
+                Navigator.pop(context);
+                getImageFromGallery();
+                                Navigator.pop(context);
+                                loadAvatar();
+
+              },
+            ),
+            ListTile(
+              title: Text('Сделать фото'),
+              onTap: () {
+                Navigator.pop(context);
+                takePhoto();
+                                Navigator.pop(context);
+                                loadAvatar();
+
+
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
