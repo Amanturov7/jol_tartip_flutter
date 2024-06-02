@@ -23,8 +23,8 @@ class _SOSPageState extends State<SOSPage> {
     try {
       final response = await http.get(Uri.parse('${Constants.baseUrl}/rest/sos/all'));
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
+        final data = json.decode(utf8.decode(response.bodyBytes));      
+          setState(() {
           sosList = List<Map<String, dynamic>>.from(data);
           isLoading = false;
         });

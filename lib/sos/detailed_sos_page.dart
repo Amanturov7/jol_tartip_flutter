@@ -13,9 +13,9 @@ class DetailedViewSOSPage extends StatelessWidget {
   Future<void> _deleteSOS(BuildContext context) async {
     try {
       final response = await http.delete(Uri.parse('${Constants.baseUrl}/rest/sos/delete/${sos['id']}'));
+
       if (response.statusCode == 204) {
         Navigator.pop(context);
-        // Обновить список SOS на предыдущей странице
         if (sosList != null) {
           sosList!();
         }
