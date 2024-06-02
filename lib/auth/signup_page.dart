@@ -5,6 +5,7 @@ import 'terms_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:jol_tartip_flutter/main.dart';
 import 'package:jol_tartip_flutter/constants.dart';
+            import 'package:flutter/services.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -22,36 +23,73 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _passportController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-  Future<void> _signup() async {
-    if (_formKey.currentState!.validate() && _agreedToTerms) {
+Future<void> _signup() async {
+  if (_formKey.currentState!.validate() && _agreedToTerms) {
+    final String apiUrl = '${Constants.baseUrl}/rest/auth/signup';
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'login': _loginController.text,
+        'password': _passwordController.text,
+        'address': _addressController.text,
+        'inn': _innController.text,
+        'passport': _passportController.text,
+        'phone': _phoneController.text,
+      }),
+    );
 
-      final String apiUrl = '${Constants.baseUrl}/auth/signup';
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'login': _loginController.text,
-          'password': _passwordController.text,
-          'address': _addressController.text,
-          'inn': _innController.text,
-          'passport': _passportController.text,
-          'phone': _phoneController.text,
-        }),
+    if (response.statusCode == 201) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => MyApp()),
+        (route) => false,
       );
+    } else {
+      // Log the response body for debugging purposes
+      print('Response body: ${response.body}');
 
-      if (response.statusCode == 201) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => MyApp()),
-          (route) => false,
-        );
+      // Parse and show error messages
+      final responseData = jsonDecode(response.body);
+      String errorMessage = '';
+
+      if (responseData is Map<String, dynamic> && responseData.containsKey('errors')) {
+        final errors = responseData['errors'];
+        if (errors is List) {
+          for (var error in errors) {
+            if (error is Map<String, dynamic> && error.containsKey('defaultMessage')) {
+              errorMessage += '${error['defaultMessage']}\n';
+            }
+          }
+        }
       } else {
-        print('Failed to signup: ${response.statusCode}');
+        errorMessage = 'An unexpected error occurred.';
       }
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error: ${response.statusCode}'),
+            content: Text(errorMessage),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,26 +125,31 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 SizedBox(height: 16),
-                TextFormField(
-                  controller: _passwordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Пожалуйста, введите пароль';
-                    }
-                    return null;
-                  },
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'password'.tr(),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                           focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
-                                            borderRadius: BorderRadius.circular(30.0),
-                                        ),
-                  ),
-                ),
+             TextFormField(
+  controller: _passwordController,
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Пожалуйста, введите пароль';
+    } else if (value.length < 8) {
+      return 'Пароль должен содержать не менее 8 символов';
+    } else if (!value.contains(RegExp(r'[A-Z]'))) {
+      return 'Пароль должен содержать хотя бы одну заглавную букву';
+    }
+    return null;
+  },
+  obscureText: true,
+  decoration: InputDecoration(
+    hintText: 'password'.tr(),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30.0),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+      borderRadius: BorderRadius.circular(30.0),
+    ),
+  ),
+),
+
                 SizedBox(height: 16),
                 TextFormField(
                   controller: _addressController,
@@ -128,25 +171,28 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 SizedBox(height: 16),
-                TextFormField(
-                  controller: _innController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Пожалуйста, введите ИНН';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'inn'.tr(),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                           focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
-                                            borderRadius: BorderRadius.circular(30.0),
-                                        ),
-                  ),
-                ),
+           TextFormField(
+  controller: _innController,
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Пожалуйста, введите ИНН';
+    } else if (value.length != 14 || !RegExp(r'^\d{14}$').hasMatch(value)) {
+      return 'ИНН должен состоять из 14 цифр';
+    }
+    return null;
+  },
+  decoration: InputDecoration(
+    hintText: 'inn'.tr(),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30.0),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+      borderRadius: BorderRadius.circular(30.0),
+    ),
+  ),
+),
+
                 SizedBox(height: 16),
                 TextFormField(
                   controller: _passportController,
@@ -168,25 +214,32 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 SizedBox(height: 16),
-                TextFormField(
-                  controller: _phoneController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Пожалуйста, введите номер телефона';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'phone_number'.tr(),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                           focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(color: Color(0xFF3BB5E9)), 
-                                            borderRadius: BorderRadius.circular(30.0),
-                                        ),
-                  ),
-                ),
+
+TextFormField(
+  controller: _phoneController,
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Пожалуйста, введите номер телефона';
+    } else if (!RegExp(r'^\d+$').hasMatch(value)) {
+      return 'Номер телефона должен содержать только цифры';
+    }
+    return null;
+  },
+  decoration: InputDecoration(
+    hintText: 'phone_number'.tr(),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30.0),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color(0xFF3BB5E9)),
+      borderRadius: BorderRadius.circular(30.0),
+    ),
+  ),
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+  ],
+),
+
                 SizedBox(height: 16),
                 Row(
                   children: <Widget>[

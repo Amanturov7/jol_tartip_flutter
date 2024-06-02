@@ -47,31 +47,30 @@ class _ViolationFormPageState extends State<ViolationFormPage> {
   }
   
 
-void _handleLocationSelection(double latitude, double longitude) {
-  setState(() {
-    lat = latitude;
-    lon = longitude;
-    print(lat);
-    print(lon);
-  });
-}
-
-
-  void _selectLocation() async {
-  final location = await Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => MapMarkerPage()),
-  );
-
-  if (location != null) {
+  void _handleLocationSelection(double latitude, double longitude) {
     setState(() {
-      lat = location[0]; 
-      lon = location[1]; 
+      lat = latitude;
+      lon = longitude;
       print(lat);
       print(lon);
     });
   }
-}
+
+  void _selectLocation() async {
+    final location = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MapMarkerPage()),
+    );
+
+    if (location != null) {
+      setState(() {
+        lat = location[0]; 
+        lon = location[1]; 
+        print(lat);
+        print(lon);
+      });
+    }
+  }
 
   Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -193,7 +192,7 @@ void _handleLocationSelection(double latitude, double longitude) {
 
     request.fields['dto'] = jsonEncode({
       'type': 'application',
-      'originName': File(_image!.path).path.split('/').last,
+      'originName': File(_image!.path).path.split('/'),
       'description': 'File description',
       'userId': userId.toString(),
       'applicationsId': applicationId.toString(),
@@ -206,7 +205,7 @@ void _handleLocationSelection(double latitude, double longitude) {
     ));
 
     try {
-      var streamedResponse = await request.send();
+      var streamedResponse = await request.send().timeout(Duration(minutes: 5));  // Увеличено время ожидания
       var response = await http.Response.fromStream(streamedResponse);
       if (response.statusCode == 200) {
         print('Файл успешно загружен');
@@ -441,8 +440,7 @@ void _handleLocationSelection(double latitude, double longitude) {
                 ),
                 SizedBox(height: 8),
                 ElevatedButton(
-                  onPressed: submitForm,
-                  child: Container(
+                  onPressed: submitForm,                  child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.all(16),
                     alignment: Alignment.center,
@@ -489,3 +487,4 @@ void _handleLocationSelection(double latitude, double longitude) {
     }
   }
 }
+

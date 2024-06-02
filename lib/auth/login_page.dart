@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      final String apiUrl = '${Constants.baseUrl}/auth/authenticate';
+      final String apiUrl = '${Constants.baseUrl}/rest/auth/authenticate';
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: <String, String>{
@@ -44,8 +44,27 @@ class _LoginPageState extends State<LoginPage> {
           (route) => false,
         );
       } else {
-        // Обрабатываем ошибку
+
+
+     showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(response.statusCode.toString()),
+            content: Text(response.body),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
         print('Failed to login: ${response.statusCode}');
+
       }
     }
   }
