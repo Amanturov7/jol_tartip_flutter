@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:jol_tartip_flutter/compress_image.dart';
 import 'package:jol_tartip_flutter/constants.dart';
 import 'package:jol_tartip_flutter/map_marker.dart';
 import 'image_selector_box.dart'; 
@@ -109,113 +110,119 @@ class _ViolationFormPageState extends State<ViolationFormPage> {
   }
 
   Future<void> submitForm() async {
-    if (_image == null) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('error'.tr()),
-            content: Text('please_select_image'.tr()),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-      return;
-    }
-    
-    if (_formKey.currentState!.validate()) {
-      var url = Uri.parse('${Constants.baseUrl}/rest/applications/create');
-      var headers = {'Content-Type': 'application/json'};
-      final int timestamp = dateAndTimeOfViolation!.millisecondsSinceEpoch;
-      var body = jsonEncode({
-        'description': description,
-        'place': place,
-        'lat': lat,
-        'lon': lon,
-        'status': status,
-        'dateOfViolation': timestamp,
-        'regionId': regionId,
-        'districtId': districtId,
-        'typeViolationsId': typeViolationsId,
-        'userId': userId,
-        'numberAuto': numberAuto,
-      });
-
-      try {
-        var response = await http.post(url, headers: headers, body: body);
-
-        if (response.statusCode == 200) {
-          print('Form submitted successfully');
-          var responseData = jsonDecode(response.body);
-          var applicationId = responseData['id'];
-          if (_image != null) {
-            await uploadFile(applicationId);
-          }
-          
-          Navigator.pop(context);
-        } else {
-          print('Failed to submit form');
-        }
-      } catch (error) {
-        print('Error creating application: $error');
-      }
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('success'.tr()),
-            content: Text('violation_saved'.tr()),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    }
+  if (_image == null) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('error'.tr()),
+          content: Text('please_select_image'.tr()),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    return;
   }
 
-  Future<void> uploadFile(int applicationId) async {
-    var url = Uri.parse('${Constants.baseUrl}/rest/attachments/upload');
-    var request = http.MultipartRequest('POST', url);
+  // Сжимаем изображение перед загрузкой
+  File compressedImage = await compressImage(_image!);
 
-    request.fields['dto'] = jsonEncode({
-      'type': 'application',
-      'originName': File(_image!.path).path.split('/'),
-      'description': 'File description',
-      'userId': userId.toString(),
-      'applicationsId': applicationId.toString(),
+  if (_formKey.currentState!.validate()) {
+    var url = Uri.parse('${Constants.baseUrl}/rest/applications/create');
+    var headers = {'Content-Type': 'application/json'};
+    final int timestamp = dateAndTimeOfViolation!.millisecondsSinceEpoch;
+    var body = jsonEncode({
+      'description': description,
+      'place': place,
+      'lat': lat,
+      'lon': lon,
+      'status': status,
+      'dateOfViolation': timestamp,
+      'regionId': regionId,
+      'districtId': districtId,
+      'typeViolationsId': typeViolationsId,
+      'userId': userId,
+      'numberAuto': numberAuto,
     });
 
-    request.files.add(await http.MultipartFile.fromPath(
-      'file',
-      _image!.path,
-      contentType: MediaType('image', 'jpeg'),
-    ));
-
     try {
-      var streamedResponse = await request.send().timeout(Duration(minutes: 5));  // Увеличено время ожидания
-      var response = await http.Response.fromStream(streamedResponse);
+      var response = await http.post(url, headers: headers, body: body);
+
       if (response.statusCode == 200) {
-        print('Файл успешно загружен');
+        print('Form submitted successfully');
+        var responseData = jsonDecode(response.body);
+        var applicationId = responseData['id'];
+        if (compressedImage != null) {
+          await uploadFile(applicationId, compressedImage);
+        }
+
+        Navigator.pop(context);
       } else {
-        print('Не удалось загрузить файл. Статус код: ${response.statusCode}');
+        print('Failed to submit form');
       }
     } catch (error) {
-      print('Ошибка загрузки файла: $error');
+      print('Error creating application: $error');
     }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('success'.tr()),
+          content: Text('violation_saved'.tr()),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
+}
+
+
+Future<void> uploadFile(int applicationId, File imageFile) async {
+  var url = Uri.parse('${Constants.baseUrl}/rest/attachments/upload');
+  var request = http.MultipartRequest('POST', url);
+
+  request.fields['dto'] = jsonEncode({
+    'type': 'application',
+    'originName': File(imageFile.path).path.split('/').last,
+    'description': 'File description',
+    'userId': userId.toString(),
+    'applicationsId': applicationId.toString(),
+  });
+
+  request.files.add(await http.MultipartFile.fromPath(
+    'file',
+    imageFile.path,
+    contentType: MediaType('image', 'jpeg'),
+  ));
+
+  try {
+    var streamedResponse = await request.send().timeout(Duration(minutes: 5));  // Увеличено время ожидания
+    var response = await http.Response.fromStream(streamedResponse);
+    if (response.statusCode == 200) {
+      print('Файл успешно загружен');
+    } else {
+      print('Не удалось загрузить файл. Статус код: ${response.statusCode}');
+    }
+  } catch (error) {
+    print('Ошибка загрузки файла: $error');
+  }
+}
+
 
   Future<void> selectDateAndTime() async {
     final DateTime? pickedDateAndTime = await showDatePicker(

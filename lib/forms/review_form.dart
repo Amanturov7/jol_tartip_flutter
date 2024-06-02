@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:jol_tartip_flutter/compress_image.dart';
 import 'package:jol_tartip_flutter/forms/image_selector_box.dart';
 import 'package:jol_tartip_flutter/map_marker.dart';
 import 'dart:convert';
@@ -238,6 +239,8 @@ void _handleLocationSelection(double latitude, double longitude) {
         return;
       }
     }
+      File compressedImage = await compressImage(_image!);
+
 
     if (locationAddress.isEmpty) {
       showDialog(
@@ -281,8 +284,8 @@ void _handleLocationSelection(double latitude, double longitude) {
 
       final responseData = jsonDecode(response.body);
 
-      if (_image != null) {
-        await uploadFile(responseData['id']);
+      if (compressedImage != null) {
+        await uploadFile(responseData['id'], compressedImage);
       }
 
       setState(() {
@@ -332,13 +335,13 @@ void _handleLocationSelection(double latitude, double longitude) {
     }
   }
 
-  Future<void> uploadFile(int reviewsId) async {
+  Future<void> uploadFile(int reviewsId, File imageFile) async {
     var url = Uri.parse('${Constants.baseUrl}/rest/attachments/upload');
     var request = http.MultipartRequest('POST', url);
 
     request.fields['dto'] = jsonEncode({
       'type': 'review',
-      'originName': _image!.path.split('/').last,
+      'originName': File(imageFile.path).path.split('/').last,
       'description': 'File description',
       'userId': userId.toString(),
       'reviewsId': reviewsId.toString(),
@@ -346,7 +349,7 @@ void _handleLocationSelection(double latitude, double longitude) {
 
     request.files.add(await http.MultipartFile.fromPath(
       'file',
-      _image!.path,
+      imageFile!.path,
       contentType: MediaType('image', 'jpeg'),
     ));
 
