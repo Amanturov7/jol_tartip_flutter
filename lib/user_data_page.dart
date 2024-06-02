@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -6,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:jol_tartip_flutter/constants.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserDataPage extends StatefulWidget {
@@ -37,100 +37,97 @@ class _UserDataPageState extends State<UserDataPage> {
   @override
   void initState() {
     super.initState();
-            fetchData();
-
+    fetchData();
   }
 
-Future<void> fetchData() async {
-  setState(() {
-    isLoading = true;
-  });
+  Future<void> fetchData() async {
+    setState(() {
+      isLoading = true;
+    });
 
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  if (token != null) {
-    final response = await http.get(
-      Uri.parse('${Constants.baseUrl}/rest/user/user?token=$token'),
-      headers: <String, String>{
-        'token': token,
-      },
-    );
-    if (response.statusCode == 200) {
-      final userData = json.decode(utf8.decode(response.bodyBytes));
-      setState(() {
-        id = userData['id'] ?? 0;
-        username = userData['username'] ?? '';
-        email = userData['email'] ?? '';
-        passportSerial = userData['passportSerial'] ?? '';
-        role = userData['role'] ?? '';
-        address = userData['address'] ?? '';
-        signupDate = DateTime.tryParse(userData['signupDate'] ?? '');
-        phone = BigInt.tryParse(userData['phone'].toString()) ?? BigInt.zero;
-        inn = BigInt.tryParse(userData['inn'].toString()) ?? BigInt.zero;
-        isLoading = false;
-      });
-      loadAvatarIfNeeded(); // Вызываем загрузку аватарки после получения данных пользователя
-    } else {
-      throw Exception('Failed to load user data');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token != null) {
+      final response = await http.get(
+        Uri.parse('${Constants.baseUrl}/rest/user/user?token=$token'),
+        headers: <String, String>{
+          'token': token,
+        },
+      );
+      if (response.statusCode == 200) {
+        final userData = json.decode(utf8.decode(response.bodyBytes));
+        setState(() {
+          id = userData['id'] ?? 0;
+          username = userData['username'] ?? '';
+          email = userData['email'] ?? '';
+          passportSerial = userData['passportSerial'] ?? '';
+          role = userData['role'] ?? '';
+          address = userData['address'] ?? '';
+          signupDate = DateTime.tryParse(userData['signupDate'] ?? '');
+          phone = BigInt.tryParse(userData['phone'].toString()) ?? BigInt.zero;
+          inn = BigInt.tryParse(userData['inn'].toString()) ?? BigInt.zero;
+          isLoading = false;
+        });
+        loadAvatarIfNeeded(); // Вызываем загрузку аватарки после получения данных пользователя
+      } else {
+        print('Error fetching user data: ${response.statusCode}');
+        throw Exception('Failed to load user data');
+      }
     }
   }
-}
 
-
-Future<void> loadAvatar() async {
-  setState(() {
-    isAvatarLoading = true;
-  });
-  try {
-    final avatarBytes = await fetchAvatar(id);
+  Future<void> loadAvatar() async {
     setState(() {
-      _avatarImageBytes = avatarBytes;
-      isAvatarLoading = false; // Обновляем состояние после успешной загрузки
+      isAvatarLoading = true;
     });
-  } catch (e) {
-    print('Error loading avatar: $e');
-    setState(() {
-      isAvatarLoading = false; // Обновляем состояние в случае ошибки
-    });
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Ошибка загрузки'),
-          content: Text('Не удалось загрузить аватар пользователя. Пожалуйста, проверьте ваше подключение к интернету и попробуйте снова.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('ОК'),
-            ),
-          ],
-        );
-      },
-    );
+    try {
+      final avatarBytes = await fetchAvatar(id);
+      setState(() {
+        _avatarImageBytes = avatarBytes;
+        isAvatarLoading = false; // Обновляем состояние после успешной загрузки
+      });
+    } catch (e) {
+      print('Error loading avatar: $e');
+      setState(() {
+        isAvatarLoading = false; // Обновляем состояние в случае ошибки
+      });
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Ошибка загрузки'),
+            content: Text('Не удалось загрузить аватар пользователя. Пожалуйста, проверьте ваше подключение к интернету и попробуйте снова.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('ОК'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
-}
 
-
-
-    Future<Uint8List> fetchAvatar(int id) async {
-    final url = Uri.parse('${Constants.baseUrl}/rest/attachments/download/avatar/user/4');
+  Future<Uint8List> fetchAvatar(int id) async {
+    final url = Uri.parse('${Constants.baseUrl}/rest/attachments/download/avatar/user/${id}');
 
     final response = await http.get(url);
     if (response.statusCode == 200) {
       return response.bodyBytes;
     } else {
+      print('Error fetching avatar: ${response.statusCode}');
       throw Exception('Failed to load user avatar');
     }
   }
 
-
-Future<void> loadAvatarIfNeeded() async {
-  if (_avatarImageBytes == null) {
-    await loadAvatar();
+  Future<void> loadAvatarIfNeeded() async {
+    if (_avatarImageBytes == null) {
+      await loadAvatar();
+    }
   }
-}
 
   Future<void> uploadAvatar() async {
     if (_image == null) {
@@ -155,30 +152,29 @@ Future<void> loadAvatarIfNeeded() async {
     }
   }
 
- Future<void> getImageFromGallery() async {
-  final picker = ImagePicker();
-  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  Future<void> getImageFromGallery() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-  if (pickedFile != null) {
-    setState(() {
-      _image = File(pickedFile.path);
-    });
-    await uploadAvatar(); // Добавлен вызов uploadAvatar()
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+      await uploadAvatar(); // Добавлен вызов uploadAvatar()
+    }
   }
-}
 
-Future<void> takePhoto() async {
-  final picker = ImagePicker();
-  final pickedFile = await picker.pickImage(source: ImageSource.camera);
+  Future<void> takePhoto() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
-  if (pickedFile != null) {
-    setState(() {
-      _image = File(pickedFile.path);
-    });
-    await uploadAvatar(); // Добавлен вызов uploadAvatar()
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+      await uploadAvatar(); // Добавлен вызов uploadAvatar()
+    }
   }
-}
-
 
   Future<void> updateAvatar() async {
     if (_image == null) {
@@ -284,53 +280,52 @@ Future<void> takePhoto() async {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 16),
-Center(
-  child: GestureDetector(
-    onTap: () {
-      if (_avatarImageBytes != null) {
-        showFullScreenImage();
-      } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Фото профиля'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                    title: Text('Загрузить из галереи'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      getImageFromGallery();
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Сделать фото'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      takePhoto();
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }
-    },
-    child: isAvatarLoading
-        ? CircularProgressIndicator()
-        : CircleAvatar(
-            radius: 80,
-            backgroundColor: Colors.grey,
-            backgroundImage: _avatarImageBytes != null
-                ? MemoryImage(_avatarImageBytes!)
-                : null,
-          ),
-  ),
-),
-
+                      Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_avatarImageBytes != null) {
+                              showFullScreenImage();
+                            } else {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Фото профиля'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        ListTile(
+                                          title: Text('Загрузить из галереи'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            getImageFromGallery();
+                                          },
+                                        ),
+                                        ListTile(
+                                          title: Text('Сделать фото'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            takePhoto();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+                          },
+                          child: isAvatarLoading
+                              ? CircularProgressIndicator()
+                              : CircleAvatar(
+                                  radius: 80,
+                                  backgroundColor: Colors.grey,
+                                  backgroundImage: _avatarImageBytes != null
+                                      ? MemoryImage(_avatarImageBytes!):
+                                      null,
+                              ),
+                        ),
+                      ),
                       SizedBox(height: 8),
                       Text(
                         'Адрес',
@@ -504,12 +499,19 @@ Center(
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                
+                     
+                  ],
+                  
                 ),
+                
               ),
-            ),
+            )
+          )
     );
+    
+            
   }
+  
 }
 
