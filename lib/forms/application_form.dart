@@ -198,7 +198,7 @@ Future<void> uploadFile(int applicationId, File imageFile) async {
 
   request.fields['dto'] = jsonEncode({
     'type': 'application',
-    'originName': File(imageFile.path).path.split('/').last,
+    'originName': imageFile.path.split('/').last,  // Исправлено здесь,
     'description': 'File description',
     'userId': userId.toString(),
     'applicationsId': applicationId.toString(),
