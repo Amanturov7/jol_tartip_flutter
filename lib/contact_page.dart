@@ -51,7 +51,11 @@ class ContactPage extends StatelessWidget {
       scheme: 'tel',
       path: phoneNumber,
     );
-    await launch(launchUri.toString());
+    if (await canLaunch(launchUri.toString())) {
+      await launch(launchUri.toString());
+    } else {
+      throw 'Could not launch $phoneNumber';
+    }
   }
 
   void _sendEmail(String email) async {
@@ -59,20 +63,30 @@ class ContactPage extends StatelessWidget {
       scheme: 'mailto',
       path: email,
     );
-    await launch(emailLaunchUri.toString());
+    if (await canLaunch(emailLaunchUri.toString())) {
+      await launch(emailLaunchUri.toString());
+    } else {
+      throw 'Could not launch $email';
+    }
   }
 
   void _openTelegram(String username) async {
-    final String telegramUrl = 'https://t.me/$username';
-    if (await canLaunch(telegramUrl)) {
-      await launch(telegramUrl);
+    final String telegramAppUrl = 'tg://resolve?domain=$username';
+    final String telegramWebUrl = 'https://t.me/$username';
+    if (await canLaunch(telegramAppUrl)) {
+      await launch(telegramAppUrl);
+    } else {
+      await launch(telegramWebUrl);
     }
   }
 
   void _openInstagram(String username) async {
-    final String instagramUrl = 'https://www.instagram.com/$username';
-    if (await canLaunch(instagramUrl)) {
-      await launch(instagramUrl);
+    final String instagramAppUrl = 'instagram://user?username=$username';
+    final String instagramWebUrl = 'https://www.instagram.com/$username';
+    if (await canLaunch(instagramAppUrl)) {
+      await launch(instagramAppUrl);
+    } else {
+      await launch(instagramWebUrl);
     }
   }
 }
